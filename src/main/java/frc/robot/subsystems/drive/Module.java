@@ -36,6 +36,8 @@ public class Module {
   private Double speedSetpoint = null; // Setpoint for closed loop control, null for open loop
   private Rotation2d turnRelativeOffset = null; // Relative + Offset = Absolute
 
+  public double k_pid;
+
   public Module(ModuleIO io, int index) {
     this.io = io;
     this.index = index;
@@ -46,8 +48,8 @@ public class Module {
       case REAL:
       case REPLAY:
         driveFeedforward = new SimpleMotorFeedforward(0.1, 0.13);
-        driveFeedback = new PIDController(0.05, 0.0, 0.0);
-        turnFeedback = new PIDController(7.0, 0.0, 0.0);
+        driveFeedback = new PIDController(0.04, 0.0, 0.0);
+        turnFeedback = new PIDController(5.0, 0.0, 0.0);
         break;
       case SIM:
         driveFeedforward = new SimpleMotorFeedforward(0.0, 0.13);
@@ -78,7 +80,7 @@ public class Module {
     // Run closed loop turn control
     if (angleSetpoint != null) {
       io.setTurnVoltage(
-          turnFeedback.calculate(getAngle().getRadians(), angleSetpoint.getRadians()));
+          k_pid = turnFeedback.calculate(getAngle().getRadians(), angleSetpoint.getRadians()));
 
       // Run closed loop drive control
       // Only allowed if closed loop turn control is running
