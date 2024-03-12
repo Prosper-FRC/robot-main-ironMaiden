@@ -211,6 +211,8 @@ public class RobotContainer {
             () -> -controller.getLeftX(),
             () -> -controller.getRightX()));
 
+    operator.a().onTrue(new InstantCommand(() -> arm.toggleClimb()));
+
     /*
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 

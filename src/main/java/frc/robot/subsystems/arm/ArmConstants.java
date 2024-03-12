@@ -8,12 +8,13 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 
 public class ArmConstants {
   public static final int k_armMotorID = 18;
-  public static final int k_smartCurrentLimit = 40;
-  public static final double k_armSpeed = 0.35;
+  public static final int k_smartCurrentLimit = 50;
+  public static final double k_armSpeed = 1.0;
+  public static final double k_climbSpeed = 0.35;
   public static final double k_speedZero = 0.0;
   public static final boolean k_isInverted = false;
 
-  public static final double k_armGearRatio = (1.0 / 25.0) * (28.0 / 50.0) * (16.0 / 64.0);
+  public static final double k_armGearRatio = (1.0 / 125.0) * (28.0 / 50.0) * (16.0 / 64.0);
   public static final double k_positionConversionFactor = k_armGearRatio;
   public static final double k_velocityConversionFactor = k_armGearRatio / 60.0;
 
@@ -38,6 +39,7 @@ public class ArmConstants {
   public static final double k_tolerance = 0.1;
 
   public static final double k_armDeadband = 0.1;
-  public static final double k_upperBound = 0.18000; // + k_armEncoderOffset.getRotations();
-  public static final double k_lowerBound = 0.02000; // + k_armEncoderOffset.getRotations();
+  public static final double k_upperBoundAmp = 0.18000; // + k_armEncoderOffset.getRotations();
+  public static final double k_upperBoundNormal = 0.0;
+  public static final double k_lowerBound = 0.001; // + k_armEncoderOffset.getRotations();
 }
