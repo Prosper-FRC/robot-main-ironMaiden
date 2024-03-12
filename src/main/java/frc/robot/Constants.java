@@ -22,6 +22,9 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+  public static final int k_driverID = 0;
+  public static final int k_operatorID = 1;
   public static final Mode currentMode = Mode.REAL;
 
   public static enum Mode {

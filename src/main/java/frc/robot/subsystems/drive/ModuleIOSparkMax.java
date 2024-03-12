@@ -44,7 +44,7 @@ public class ModuleIOSparkMax implements ModuleIO {
 
   private final RelativeEncoder driveEncoder;
   private final RelativeEncoder turnRelativeEncoder;
-  private final CANcoder turnAbsoluteEncoder;
+  public final CANcoder turnAbsoluteEncoder;
 
   private final boolean isTurnMotorInverted = true;
   private final Rotation2d absoluteEncoderOffset;
@@ -55,25 +55,25 @@ public class ModuleIOSparkMax implements ModuleIO {
         driveSparkMax = new CANSparkMax(11, MotorType.kBrushless);
         turnSparkMax = new CANSparkMax(21, MotorType.kBrushless);
         turnAbsoluteEncoder = new CANcoder(31);
-        absoluteEncoderOffset = new Rotation2d(3.6432044694); // MUST BE CALIBRATED
+        absoluteEncoderOffset = Rotation2d.fromRotations(0.062256 + 0.5 - .005); // 3.6432044694
         break;
       case 1:
         driveSparkMax = new CANSparkMax(12, MotorType.kBrushless);
         turnSparkMax = new CANSparkMax(22, MotorType.kBrushless);
         turnAbsoluteEncoder = new CANcoder(32);
-        absoluteEncoderOffset = new Rotation2d(0.17793980789); // MUST BE CALIBRATED
+        absoluteEncoderOffset = Rotation2d.fromRotations(-0.472412 + 0.5); // 0.17793980789
         break;
       case 2:
         driveSparkMax = new CANSparkMax(13, MotorType.kBrushless);
         turnSparkMax = new CANSparkMax(23, MotorType.kBrushless);
         turnAbsoluteEncoder = new CANcoder(33);
-        absoluteEncoderOffset = new Rotation2d(5.72021190366); // MUST BE CALIBRATED
+        absoluteEncoderOffset = Rotation2d.fromRotations(0.407471 + 0.5); // 5.72021190366
         break;
       case 3:
         driveSparkMax = new CANSparkMax(14, MotorType.kBrushless);
         turnSparkMax = new CANSparkMax(24, MotorType.kBrushless);
         turnAbsoluteEncoder = new CANcoder(34);
-        absoluteEncoderOffset = new Rotation2d(4.92100958214); // MUST BE CALIBRATED
+        absoluteEncoderOffset = Rotation2d.fromRotations(0.259277 + 0.5 + 0.005); // 4.92100958214
         break;
       default:
         throw new RuntimeException("Invalid module index");
@@ -92,7 +92,7 @@ public class ModuleIOSparkMax implements ModuleIO {
 
     turnSparkMax.setInverted(isTurnMotorInverted);
     driveSparkMax.setSmartCurrentLimit(40);
-    turnSparkMax.setSmartCurrentLimit(30);
+    turnSparkMax.setSmartCurrentLimit(20);
     driveSparkMax.enableVoltageCompensation(12.0);
     turnSparkMax.enableVoltageCompensation(12.0);
 
@@ -150,5 +150,9 @@ public class ModuleIOSparkMax implements ModuleIO {
   @Override
   public void setTurnBrakeMode(boolean enable) {
     turnSparkMax.setIdleMode(enable ? IdleMode.kBrake : IdleMode.kCoast);
+  }
+
+  public CANcoder getCanCoder() {
+    return turnAbsoluteEncoder;
   }
 }

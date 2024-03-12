@@ -49,7 +49,7 @@ public class Module {
       case REPLAY:
         driveFeedforward = new SimpleMotorFeedforward(0.1, 0.13);
         driveFeedback = new PIDController(0.04, 0.0, 0.0);
-        turnFeedback = new PIDController(5.0, 0.0, 0.0);
+        turnFeedback = new PIDController(6.0, 0.0, 0.1);
         break;
       case SIM:
         driveFeedforward = new SimpleMotorFeedforward(0.0, 0.13);
