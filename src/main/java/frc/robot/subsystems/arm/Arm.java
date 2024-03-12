@@ -79,8 +79,8 @@ public class Arm extends SubsystemBase {
   // Checks if the arm is within its upper and lower bounds
   public boolean isInBound(Rotation2d setpoint, double armSpeed) {
 
-    if (setpoint.getRotations() > ArmConstants.k_upperBound && armSpeed > 0.0) return false;
-    else if (setpoint.getRotations() < ArmConstants.k_lowerBound && armSpeed < 0.0) return false;
+    /*if (setpoint.getRotations() > ArmConstants.k_upperBound && armSpeed > 0.0) return false;
+    else if (setpoint.getRotations() < ArmConstants.k_lowerBound && armSpeed < 0.0) return false;*/
     return true;
   }
 
@@ -126,4 +126,9 @@ public class Arm extends SubsystemBase {
     SmartDashboard.putNumber("Arm Input", armMotor.get());
     SmartDashboard.putNumber("Arm FF", setFeedforward());
   }
+
+  // --------------------------------------------------Autonomous
+  // Commands]-------------------------------------------------
+
+  public void shootAuto(double seconds) {}
 }
