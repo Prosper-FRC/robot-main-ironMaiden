@@ -117,12 +117,14 @@ public class RobotContainer {
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
+
     // Set up autonomous pathplanner routines
     autoChooser.addOption("SHOOT", autonomous.PL());
     autoChooser.addOption("PL-MB", autonomous.PL_MB());
     autoChooser.addOption("PL-MB-1P", autonomous.PL_MB_1P(0));
     autoChooser.addOption("PL-MB-1P-L", autonomous.PL_MB_1P_L());
     autoChooser.addOption("PL-MB-2P", autonomous.PL_MB_2P());
+    autoChooser.addOption("Auto PL-MB-1L", AutoBuilder.buildAuto("PL-M-1L"));
 
     // Configure the button bindings
     configureButtonBindings();
