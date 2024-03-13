@@ -71,15 +71,21 @@ public class Arm extends SubsystemBase {
     isClimb = !isClimb;
   }
 
-  public double toggleAmp() {
-    if (isAmp) {
-      return ArmConstants.k_upperBoundAmp;
-    }
-    else {
+  private double isAmpUpperBound() {
+    if (isClimb) {
       return ArmConstants.k_upperBoundNormal;
     }
 
+    return ArmConstants.k_upperBound;
   }
+
+  /*public double toggleAmp() {
+  if (isAmp) {
+    return ArmConstants.k_upperBoundAmp;
+  }
+  else {
+    return ArmConstants.k_upperBoundNormal;
+  }*/
 
   /*public void runClimb() {
     // setSpeed(Math.copySign(ArmConstants.k_climbSpeed, -1));
@@ -109,7 +115,7 @@ public class Arm extends SubsystemBase {
   // Checks if the arm is within its upper and lower bounds
   public boolean isInBound(Rotation2d setpoint, double armSpeed) {
 
-    if (setpoint.getRotations() > toggleAmp() && armSpeed > 0.0) return false;
+    if (setpoint.getRotations() > isAmpUpperBound() && armSpeed > 0.0) return false;
     else if (setpoint.getRotations() < ArmConstants.k_lowerBound && armSpeed < 0.0) return false;
     return true;
   }
@@ -136,6 +142,8 @@ public class Arm extends SubsystemBase {
 
     armEncoder.setPositionConversionFactor(ArmConstants.k_positionConversionFactor);
     armEncoder.setVelocityConversionFactor(ArmConstants.k_velocityConversionFactor);
+
+    armEncoder.setPosition(0);
 
     armController.setP(ArmConstants.k_armP);
     armController.setI(ArmConstants.k_armI);
