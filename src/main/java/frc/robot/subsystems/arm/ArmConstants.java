@@ -14,7 +14,7 @@ public class ArmConstants {
   public static final double k_speedZero = 0.0;
   public static final boolean k_isInverted = false;
 
-  public static final double k_armGearRatio = (1.0 / 125.0) * (28.0 / 50.0) * (16.0 / 64.0);
+  public static final double k_armGearRatio = (1.0 / 125.0) * (28.0 / 50.0) * (16.0 / 64.0); // was 1/25, but another maxplanetary was added to make it 1/125.
   public static final double k_positionConversionFactor = k_armGearRatio;
   public static final double k_velocityConversionFactor = k_armGearRatio / 60.0;
 
@@ -34,7 +34,7 @@ public class ArmConstants {
       new ProfiledPIDController(0.0, 0.0, 0.0, k_trapezoidalConstraints);
 
   public static final double k_intakeSetpoint = 0.0;
-  public static final double k_ampSetpoint = 0.18839;
+  public static final double k_ampSetpoint = 0.18000;
   public static final double k_shootSetpoint = 0.0189998;
   public static final double k_tolerance = 0.1;
 
