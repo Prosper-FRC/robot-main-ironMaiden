@@ -15,14 +15,11 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
-import com.pathplanner.lib.path.PathPlannerPath;
-
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.robot.auto.Autonomous;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.arm.Arm;
@@ -48,12 +45,15 @@ public class RobotContainer {
   private final Drive drive;
 
   // Controller
-  private final CommandXboxController driver = new CommandXboxController(Constants.k_driverID);
-  private final CommandXboxController operator = new CommandXboxController(Constants.k_operatorID);
-  private final Arm arm;
-  private Intake intake;
-  private Shooter shooter;
-  private Autonomous autonomous;
+  private static final CommandXboxController driver =
+      new CommandXboxController(Constants.k_driverID);
+  private static final CommandXboxController operator =
+      new CommandXboxController(Constants.k_operatorID);
+  public static final Arm arm = new Arm(operator.getHID());
+  ;
+  private static Intake intake;
+  private static Shooter shooter;
+  private static Autonomous autonomous;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -62,7 +62,6 @@ public class RobotContainer {
   public RobotContainer() {
 
     intake = new Intake();
-    arm = new Arm(operator.getHID());
     shooter = new Shooter(intake);
 
     // Manual:
@@ -78,13 +77,6 @@ public class RobotContainer {
                 new ModuleIOSparkMax(1),
                 new ModuleIOSparkMax(2),
                 new ModuleIOSparkMax(3));
-        // drive = new Drive(
-        // new GyroIOPigeon2(),
-        // new ModuleIOTalonFX(0),
-        // new ModuleIOTalonFX(1),
-        // new ModuleIOTalonFX(2),
-        // new ModuleIOTalonFX(3));
-        // flywheel = new Flywheel(new FlywheelIOTalonFX());
         break;
 
       case SIM:
@@ -110,21 +102,21 @@ public class RobotContainer {
         break;
     }
 
-    autonomous = new Autonomous(drive, intake, shooter, arm);
+    autonomous = new Autonomous(intake, shooter);
 
     // Set up auto routines
     NamedCommands.registerCommand("Run Shoot", autonomous.SHOOT());
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
-
     // Set up autonomous pathplanner routines
-    autoChooser.addOption("SHOOT", autonomous.PL());
-    autoChooser.addOption("PL-MB", autonomous.PL_MB());
-    autoChooser.addOption("PL-MB-1P", autonomous.PL_MB_1P(0));
-    autoChooser.addOption("PL-MB-1P-L", autonomous.PL_MB_1P_L());
-    autoChooser.addOption("PL-MB-2P", autonomous.PL_MB_2P());
-    autoChooser.addOption("Auto PL-MB-1L", AutoBuilder.buildAuto("PL-M-1L"));
+    autoChooser.addOption("Auto: SHOOT", autonomous.SHOOT());
+    // autoChooser.addOption("Auto: PL-MB", autonomous.PL_MB());
+    // autoChooser.addOption("Auto: PL-MB-1P", autonomous.PL_MB_1P(0));
+    // autoChooser.addOption("Auto: PL-MB-1P-L", autonomous.PL_MB_1P_L());
+    // autoChooser.addOption("Auto: PL-MB-2P", autonomous.PL_MB_2P());
+    // autoChooser.addOption("Auto: Auto PL-MB-1L", AutoBuilder.buildAuto("PL-M-1L"));
+    // autoChooser.addOption("Auto: Test", autonomous.test());
 
     // Configure the button bindings
     configureButtonBindings();
@@ -137,7 +129,8 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
 
-  // -------------------------------------------------------------------[Button Bindings]-----------------------------------------------------------------------
+  // -------------------------------------------------------------------[Button
+  // Bindings]-----------------------------------------------------------------------
 
   private void configureButtonBindings() {
 

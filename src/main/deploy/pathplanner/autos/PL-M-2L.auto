@@ -2,10 +2,10 @@
   "version": 1.0,
   "startingPose": {
     "position": {
-      "x": 0.7685711708164432,
-      "y": 6.552955112570696
+      "x": 1.25,
+      "y": 5.7
     },
-    "rotation": -120.0
+    "rotation": 0
   },
   "command": {
     "type": "sequential",
@@ -14,7 +14,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "To Shoot1"
+            "pathName": "To Shoot2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Shoot2-Note2"
           }
         }
       ]
