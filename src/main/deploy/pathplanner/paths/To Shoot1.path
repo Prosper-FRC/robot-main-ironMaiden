@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 2.6,
-        "y": 6.8
+        "x": 0.7568818754428092,
+        "y": 6.5494323112252175
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.5,
-        "y": 6.8
+        "x": 0.8568818754428098,
+        "y": 6.5494323112252175
       },
       "isLocked": false,
       "linkedName": null
@@ -20,7 +20,7 @@
         "y": 6.4
       },
       "prevControl": {
-        "x": 1.4999999999999998,
+        "x": 1.3,
         "y": 6.4
       },
       "nextControl": null,
@@ -43,10 +43,10 @@
     "rotateFast": false
   },
   "reversed": false,
-  "folder": "Note to Shoot",
+  "folder": null,
   "previewStartingState": {
-    "rotation": 30.0,
-    "velocity": 0.0
+    "rotation": 60.0,
+    "velocity": 0
   },
   "useDefaultConstraints": false
 }

@@ -18,9 +18,33 @@
           }
         },
         {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
           "type": "path",
           "data": {
             "pathName": "Shoot1-Note1"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Note1-Shoot1"
+          }
+        },
+        {
+          "type": "wait",
+          "data": {
+            "waitTime": 1.0
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Shoot1-Note2"
           }
         }
       ]

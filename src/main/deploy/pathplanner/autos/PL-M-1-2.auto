@@ -40,6 +40,18 @@
           "data": {
             "waitTime": 1.0
           }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Shoot1-Note2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "Note2-Shoot2"
+          }
         }
       ]
     }

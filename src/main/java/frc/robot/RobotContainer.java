@@ -15,12 +15,15 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.path.PathPlannerPath;
+
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.robot.auto.Autonomous;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.arm.ArmCommand;
@@ -110,13 +113,16 @@ public class RobotContainer {
     autonomous = new Autonomous(drive, intake, shooter, arm);
 
     // Set up auto routines
-    NamedCommands.registerCommand("Run Shoot", autonomous.shoot());
+    NamedCommands.registerCommand("Run Shoot", autonomous.SHOOT());
 
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
-    // Set up SysId routines
-    autoChooser.addOption("Shoot", autonomous.shoot());
-    autoChooser.addOption("Sh-Mb", );
+    // Set up autonomous pathplanner routines
+    autoChooser.addOption("SHOOT", autonomous.PL());
+    autoChooser.addOption("PL-MB", autonomous.PL_MB());
+    autoChooser.addOption("PL-MB-1P", autonomous.PL_MB_1P(0));
+    autoChooser.addOption("PL-MB-1P-L", autonomous.PL_MB_1P_L());
+    autoChooser.addOption("PL-MB-2P", autonomous.PL_MB_2P());
 
     // Configure the button bindings
     configureButtonBindings();
@@ -129,8 +135,7 @@ public class RobotContainer {
    * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
    */
 
-  // -------------------------------------------------------------------[Button
-  // Bindings]-----------------------------------------------------------------------
+  // -------------------------------------------------------------------[Button Bindings]-----------------------------------------------------------------------
 
   private void configureButtonBindings() {
 
@@ -177,10 +182,6 @@ public class RobotContainer {
                   shooter.zero();
                   intake.zero();
                 }));
-
-    driver.x().onTrue(autonomous.shoot());
-
-    driver.b().onTrue(autonomous.cancel());
 
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(

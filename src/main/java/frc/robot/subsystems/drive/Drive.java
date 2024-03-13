@@ -77,7 +77,7 @@ public class Drive extends SubsystemBase {
     modules[2] = new Module(blModuleIO, 2);
     modules[3] = new Module(brModuleIO, 3);
 
-    // Configure AutoBuilder for PathPlanner
+    // ----------------------------------------------------[AutoBuilder Configuration]---------------------------------------------------------
     AutoBuilder.configureHolonomic(
         this::getPose,
         this::setPose,
