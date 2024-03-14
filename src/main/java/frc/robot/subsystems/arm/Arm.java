@@ -15,9 +15,12 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.leds.LEDs;
 
 public class Arm extends SubsystemBase {
   /** Creates a new Climb. */
+  private LEDs leds;
+
   private CANSparkMax armMotor;
 
   private RelativeEncoder armEncoder;
@@ -27,7 +30,9 @@ public class Arm extends SubsystemBase {
   private boolean isClimb = false;
   private boolean isAmp = false;
 
-  public Arm(XboxController controller) {
+  public Arm(XboxController controller, LEDs leds) {
+
+    this.leds = leds;
 
     armMotor = new CANSparkMax(ArmConstants.k_armMotorID, MotorType.kBrushless);
 
@@ -67,8 +72,14 @@ public class Arm extends SubsystemBase {
   }
 
   // Toggling between climb and regular arm mode because the arm speeds are different for these two
-  public void toggleClimb() {
-    isClimb = !isClimb;
+  public void climbOn() {
+    isClimb = true;
+    leds.toggleRed();
+  }
+
+  public void climbOff() {
+    isClimb = false;
+    leds.setLEDsPurple();
   }
 
   private double isAmpUpperBound() {
@@ -115,8 +126,8 @@ public class Arm extends SubsystemBase {
   // Checks if the arm is within its upper and lower bounds
   public boolean isInBound(Rotation2d setpoint, double armSpeed) {
 
-    if (setpoint.getRotations() > isAmpUpperBound() && armSpeed > 0.0) return false;
-    else if (setpoint.getRotations() < ArmConstants.k_lowerBound && armSpeed < 0.0) return false;
+    /*if (setpoint.getRotations() > isAmpUpperBound() && armSpeed > 0.0) return false;
+    else if (setpoint.getRotations() < ArmConstants.k_lowerBound && armSpeed < 0.0) return false;*/
     return true;
   }
 

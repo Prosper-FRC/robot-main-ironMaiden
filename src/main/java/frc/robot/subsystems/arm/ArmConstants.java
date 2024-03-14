@@ -10,7 +10,7 @@ public class ArmConstants {
   public static final int k_armMotorID = 18;
   public static final int k_smartCurrentLimit = 50;
   public static final double k_armSpeed = 1.0;
-  public static final double k_climbSpeed = 0.35;
+  public static final double k_climbSpeed = 0.3;
   public static final double k_speedZero = 0.0;
   public static final boolean k_isInverted = false;
 

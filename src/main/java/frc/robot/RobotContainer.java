@@ -31,6 +31,7 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkMax;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.leds.LEDs;
 import frc.robot.subsystems.shooter.Shooter;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -49,8 +50,10 @@ public class RobotContainer {
       new CommandXboxController(Constants.k_driverID);
   private static final CommandXboxController operator =
       new CommandXboxController(Constants.k_operatorID);
-  public static final Arm arm = new Arm(operator.getHID());
-  ;
+
+  private static final LEDs leds = new LEDs();
+  public static final Arm arm = new Arm(operator.getHID(), leds);
+
   private static Intake intake;
   private static Shooter shooter;
   private static Autonomous autonomous;
@@ -137,7 +140,11 @@ public class RobotContainer {
     // right bumper intakes note and retracts to move note away from shooter wheels
     operator
         .leftBumper()
-        .whileTrue(new InstantCommand(() -> intake.intake()))
+        .whileTrue(
+            new InstantCommand(
+                () -> {
+                  intake.intake();
+                }))
         .onFalse(intake.retract());
 
     // 'a' button outtakes note
@@ -178,11 +185,23 @@ public class RobotContainer {
                   intake.zero();
                 }));
 
+    operator
+        .a()
+        .onTrue(
+            new InstantCommand(
+                () -> {
+                  arm.climbOn();
+                }));
+
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> -driver.getRightX()));
 
-    operator.a().onTrue(new InstantCommand(() -> arm.toggleClimb()));
+    driver.leftBumper().onTrue(leds.toggleOrange());
+
+    driver.rightBumper().onTrue(leds.toggleBlue());
+
+    driver.rightTrigger().onTrue(new InstantCommand(() -> arm.climbOff()));
 
     /*
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
