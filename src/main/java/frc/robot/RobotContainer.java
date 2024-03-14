@@ -116,7 +116,7 @@ public class RobotContainer {
     // autoChooser.addOption("Auto: PL-MB-1P-L", autonomous.PL_MB_1P_L());
     // autoChooser.addOption("Auto: PL-MB-2P", autonomous.PL_MB_2P());
     // autoChooser.addOption("Auto: Auto PL-MB-1L", AutoBuilder.buildAuto("PL-M-1L"));
-    // autoChooser.addOption("Auto: Test", autonomous.test());
+    autoChooser.addOption("Auto: Test", autonomous.test());
 
     // Configure the button bindings
     configureButtonBindings();

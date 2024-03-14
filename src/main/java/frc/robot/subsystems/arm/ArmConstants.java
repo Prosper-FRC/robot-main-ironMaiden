@@ -9,7 +9,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 public class ArmConstants {
   public static final int k_armMotorID = 18;
   public static final int k_smartCurrentLimit = 40;
-  public static final double k_armSpeed = 0.35;
+  public static final double k_armSpeed = 0.85;
   public static final double k_speedZero = 0.0;
   public static final boolean k_isInverted = false;
 

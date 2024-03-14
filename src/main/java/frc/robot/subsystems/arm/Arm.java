@@ -80,7 +80,8 @@ public class Arm extends SubsystemBase {
   public boolean isInBound(Rotation2d setpoint, double armSpeed) {
 
     /*if (setpoint.getRotations() > ArmConstants.k_upperBound && armSpeed > 0.0) return false;
-    else if (setpoint.getRotations() < ArmConstants.k_lowerBound && armSpeed < 0.0) return false;*/
+        else if (setpoint.getRotations() < ArmConstants.k_lowerBound && armSpeed < 0.0) return false;
+    */
     return true;
   }
 
