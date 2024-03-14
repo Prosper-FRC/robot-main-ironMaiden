@@ -24,6 +24,9 @@ public class Arm extends SubsystemBase {
   private ProfiledPIDController armController;
   private ArmFeedforward feedForward;
 
+  private boolean isClimb = false;
+  private boolean isAmp = false;
+
   public Arm(XboxController controller) {
 
     armMotor = new CANSparkMax(ArmConstants.k_armMotorID, MotorType.kBrushless);
@@ -52,15 +55,48 @@ public class Arm extends SubsystemBase {
 
   // Depending on the value of the joysticks, move the arm up or down (manual)
   public void runArm(double voltage) {
-    if (voltage == 0) setSpeed(ArmConstants.k_speedZero);
-    else setSpeed(Math.copySign(ArmConstants.k_armSpeed, voltage));
+    if (voltage == 0) {
+      setSpeed(ArmConstants.k_speedZero);
+    } else {
+      if (isClimb) {
+        setSpeed(Math.copySign(ArmConstants.k_climbSpeed, voltage));
+      } else {
+        setSpeed(Math.copySign(ArmConstants.k_armSpeed, voltage));
+      }
+    }
   }
+
+  // Toggling between climb and regular arm mode because the arm speeds are different for these two
+  public void toggleClimb() {
+    isClimb = !isClimb;
+  }
+
+  private double isAmpUpperBound() {
+    if (isClimb) {
+      return ArmConstants.k_upperBoundNormal;
+    }
+
+    return ArmConstants.k_upperBound;
+  }
+
+  /*public double toggleAmp() {
+  if (isAmp) {
+    return ArmConstants.k_upperBoundAmp;
+  }
+  else {
+    return ArmConstants.k_upperBoundNormal;
+  }*/
+
+  /*public void runClimb() {
+    // setSpeed(Math.copySign(ArmConstants.k_climbSpeed, -1));
+    setSpeed(-0.5);
+  }*/
 
   // Sets the speed of the motors if it is within the bounds of the robot
   public void setSpeed(double armSpeed) {
     if (isInBound(getPosition(), armSpeed) && Math.abs(armSpeed) > 0)
       armMotor.set(armSpeed); // armMotor.set(armSpeed + setFeedforward())
-    else armMotor.set(0 / 2);
+    else armMotor.set(0 / 3.5);
   }
 
   // Calculate the motor speed based on PIDs
@@ -79,9 +115,8 @@ public class Arm extends SubsystemBase {
   // Checks if the arm is within its upper and lower bounds
   public boolean isInBound(Rotation2d setpoint, double armSpeed) {
 
-    /*if (setpoint.getRotations() > ArmConstants.k_upperBound && armSpeed > 0.0) return false;
-        else if (setpoint.getRotations() < ArmConstants.k_lowerBound && armSpeed < 0.0) return false;
-    */
+    if (setpoint.getRotations() > isAmpUpperBound() && armSpeed > 0.0) return false;
+    else if (setpoint.getRotations() < ArmConstants.k_lowerBound && armSpeed < 0.0) return false;
     return true;
   }
 
@@ -108,6 +143,8 @@ public class Arm extends SubsystemBase {
     armEncoder.setPositionConversionFactor(ArmConstants.k_positionConversionFactor);
     armEncoder.setVelocityConversionFactor(ArmConstants.k_velocityConversionFactor);
 
+    armEncoder.setPosition(0);
+
     armController.setP(ArmConstants.k_armP);
     armController.setI(ArmConstants.k_armI);
     armController.setD(ArmConstants.k_armD);
@@ -126,6 +163,8 @@ public class Arm extends SubsystemBase {
     SmartDashboard.putNumber("Arm Applied Output", armMotor.getAppliedOutput());
     SmartDashboard.putNumber("Arm Input", armMotor.get());
     SmartDashboard.putNumber("Arm FF", setFeedforward());
+    SmartDashboard.putBoolean("isClimb", isClimb);
+    SmartDashboard.putBoolean("isAmp", isAmp);
   }
 
   // --------------------------------------------------Autonomous

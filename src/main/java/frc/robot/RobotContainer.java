@@ -182,6 +182,8 @@ public class RobotContainer {
         DriveCommands.joystickDrive(
             drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> -driver.getRightX()));
 
+    operator.a().onTrue(new InstantCommand(() -> arm.toggleClimb()));
+
     /*
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
 
