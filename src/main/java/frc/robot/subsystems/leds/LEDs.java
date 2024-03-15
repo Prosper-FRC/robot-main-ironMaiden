@@ -26,6 +26,8 @@ public class LEDs extends SubsystemBase {
 
     LEDs.setData(LEDBuffer);
     LEDs.start();
+
+    setLEDsPurple();
   }
 
   // Purple will be the default color of the LEDs (set to Eclipse)

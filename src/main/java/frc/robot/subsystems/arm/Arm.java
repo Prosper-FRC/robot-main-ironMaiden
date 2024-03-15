@@ -74,11 +74,12 @@ public class Arm extends SubsystemBase {
   // Toggling between climb and regular arm mode because the arm speeds are different for these two
   public void climbOn() {
     isClimb = true;
-    leds.toggleRed();
+    leds.setLEDsRed();
   }
 
   public void climbOff() {
     isClimb = false;
+
     leds.setLEDsPurple();
   }
 
@@ -96,7 +97,7 @@ public class Arm extends SubsystemBase {
   }
   else {
     return ArmConstants.k_upperBoundNormal;
-  }*/   
+  }*/
 
   /*public void runClimb() {
     // setSpeed(Math.copySign(ArmConstants.k_climbSpeed, -1));
@@ -125,10 +126,9 @@ public class Arm extends SubsystemBase {
 
   // Checks if the arm is within its upper and lower bounds
   public boolean isInBound(Rotation2d setpoint, double armSpeed) {
-
     if (!isClimb) {
-        if (setpoint.getRotations() > isAmpUpperBound() && armSpeed > 0.0) return false;
-        else if (setpoint.getRotations() < ArmConstants.k_lowerBound && armSpeed < 0.0) return false;
+      if (setpoint.getRotations() > isAmpUpperBound() && armSpeed > 0.0) return false;
+      else if (setpoint.getRotations() < ArmConstants.k_lowerBound && armSpeed < 0.0) return false;
     }
     return true;
   }
