@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.auto.Autonomous;
 import frc.robot.commands.DriveCommands;
@@ -137,6 +138,16 @@ public class RobotContainer {
 
   private void configureButtonBindings() {
 
+    /* New operator bindings:
+    - left bumper = intake
+    - left trigger = outtake
+    - right bumper = shoot (starts intake and shooter wheels)
+    - X = amp pos
+    - B = speaker pos
+    - Right joystick = manual (in ArmCommand)
+    */
+
+
     // right bumper intakes note and retracts to move note away from shooter wheels
     operator
         .leftBumper()
@@ -164,17 +175,21 @@ public class RobotContainer {
                   intake.zero();
                 }));
 
-    // Left joystick CLICK shoots amp, also moves intake using one button
+    // Button x = arm to Amp Position, starts shooter wheels
     operator
-        .rightTrigger()
-        .whileTrue(shooter.shootAmp())
+        .x()
+        .whileTrue(new ParallelCommandGroup(
+          new InstantCommand(() -> arm.goToAmpPos()),
+          new InstantCommand(() -> shooter.shootAmp())
+        ))
         .onFalse(
             new InstantCommand(
                 () -> {
                   shooter.zero();
-                  intake.zero();
+                  // intake.zero();
                 }));
 
+    // Sets speaker wheels to reverse
     operator
         .povUp()
         .whileTrue(new InstantCommand(() -> shooter.setSpeedReverse()))
@@ -185,13 +200,14 @@ public class RobotContainer {
                   intake.zero();
                 }));
 
+    // Button b = arm to Speaker position, starts shooter wheels
     operator
-        .a()
+        .b()
         .onTrue(
-            new InstantCommand(
-                () -> {
-                  arm.climbOn();
-                }));
+            new ParallelCommandGroup(
+              new InstantCommand(() -> arm.goToShootPos()),
+              new InstantCommand(() -> shooter.shootSpeaker())
+            ));
 
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
