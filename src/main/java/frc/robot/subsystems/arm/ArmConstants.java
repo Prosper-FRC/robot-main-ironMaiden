@@ -15,7 +15,7 @@ public class ArmConstants {
   public static final boolean k_isInverted = false;
 
   public static final double k_armGearRatio =
-      (1.0 / 125.0)
+      (1.0 / 60.0)
           * (28.0 / 50.0)
           * (16.0 / 64.0); // was 1/25, but another maxplanetary was added to make it 1/125.
   public static final double k_positionConversionFactor = k_armGearRatio;
