@@ -58,7 +58,7 @@ public class DriveCommands {
                   .getTranslation();
 
           // Convert to field relative speeds & send command
-          boolean isFlipped = true;
+          boolean isFlipped = false;
 
           drive.runVelocity(
               ChassisSpeeds.fromFieldRelativeSpeeds(
