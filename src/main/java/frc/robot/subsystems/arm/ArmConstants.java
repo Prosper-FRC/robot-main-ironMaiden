@@ -25,8 +25,8 @@ public class ArmConstants {
   public static final double k_armI = 0.0;
   public static final double k_armD = 0.0;
 
-  public static final double k_maxVelocity = 1; // use 0 to 1
-  public static final double k_maxAcceleration = 0.3; // use 0 to 1
+  public static final double k_maxVelocity = 1;//use 0 to 1
+  public static final double k_maxAcceleration = 0.3;//use 0 to 1
 
   public static final Rotation2d k_armEncoderOffset = Rotation2d.fromRotations(0.007469); // 1.342
   public static final double k_armFreeSpeed = 5676.0 * k_velocityConversionFactor;

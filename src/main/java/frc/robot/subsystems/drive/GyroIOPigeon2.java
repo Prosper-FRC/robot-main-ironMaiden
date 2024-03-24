@@ -23,13 +23,13 @@ import edu.wpi.first.math.util.Units;
 
 /** IO implementation for Pigeon2 */
 public class GyroIOPigeon2 implements GyroIO {
-  private final Pigeon2 pigeon = new Pigeon2(41);
+  public final Pigeon2 pigeon = new Pigeon2(41);
   private final StatusSignal<Double> yaw = pigeon.getYaw();
   private final StatusSignal<Double> yawVelocity = pigeon.getAngularVelocityZWorld();
 
   public GyroIOPigeon2() {
     pigeon.getConfigurator().apply(new Pigeon2Configuration());
-    pigeon.getConfigurator().setYaw(0.0);
+    // pigeon.getConfigurator().setYaw(0.0);
     yaw.setUpdateFrequency(100.0);
     yawVelocity.setUpdateFrequency(100.0);
     pigeon.optimizeBusUtilization();

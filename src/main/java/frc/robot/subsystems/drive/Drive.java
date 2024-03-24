@@ -129,6 +129,8 @@ public class Drive extends SubsystemBase {
 
   public void periodic() {
 
+    SmartDashboard.putNumber("Gyro Val", gyroIOPigeon2.pigeon.getYaw().getValueAsDouble());
+
     gyroIO.updateInputs(gyroInputs);
     Logger.processInputs("Drive/Gyro", gyroInputs);
     for (var module : modules) {
