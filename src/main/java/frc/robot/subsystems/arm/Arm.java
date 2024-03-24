@@ -55,21 +55,37 @@ public class Arm extends SubsystemBase {
 
   // Moves arm down to pick up note
   public void goToClimbUpPos() {
+    armController.setConstraints(
+        new TrapezoidProfile.Constraints(
+            ArmConstants.k_maxVelocity, ArmConstants.k_maxAcceleration));
     setpoint = ArmConstants.k_climbUpSetpoint;
-    armController.setGoal(ArmConstants.k_climbUpSetpoint);
+    // armController.setGoal(ArmConstants.k_climbUpSetpoint);
     System.out.println("Going to climb up pos");
   }
 
   // Moves arm up to shoot note
   public void goToShootPos() {
+    armController.setConstraints(
+        new TrapezoidProfile.Constraints(
+            ArmConstants.k_maxVelocity, ArmConstants.k_maxAcceleration));
     setpoint = ArmConstants.k_shootSetpoint;
-    armController.setGoal(ArmConstants.k_shootSetpoint);
+    // armController.setGoal(ArmConstants.k_shootSetpoint);
     System.out.println("Going to shoot pos");
+  }
+
+  public void goToClimbDownPos() {
+    armController.setConstraints(new TrapezoidProfile.Constraints(0.05, 0.05));
+    setpoint = ArmConstants.k_shootSetpoint;
+    // armController.setGoal(ArmConstants.k_shootSetpoint);
+    System.out.println("Going to climb down pos");
   }
   // Moves arm to amp position to shoot note
   double pidVal;
 
   public void goToAmpPos() {
+    armController.setConstraints(
+        new TrapezoidProfile.Constraints(
+            ArmConstants.k_maxVelocity, ArmConstants.k_maxAcceleration));
     setpoint = ArmConstants.k_ampSetpoint;
     System.out.println("Going to amp pos");
   }

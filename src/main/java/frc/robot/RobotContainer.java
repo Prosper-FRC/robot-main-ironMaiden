@@ -70,6 +70,14 @@ public class RobotContainer {
         new WaitCommand(1.0),
         new InstantCommand(() -> intake.intake()));
   }
+
+  public Command shootButtonBinding() {
+    return new SequentialCommandGroup(
+        new ParallelCommandGroup(new InstantCommand(() -> shooter.setSpeakerSpeed())),
+        new InstantCommand(() -> arm.goToShootPos()),
+        new WaitCommand(1.0),
+        new InstantCommand(() -> intake.intake()));
+  }
   ;
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
@@ -199,10 +207,10 @@ public class RobotContainer {
 
     operator
         .a()
-        .onTrue(
+        .whileTrue(
             new InstantCommand(
                 () -> {
-                  arm.climbOn();
+                  arm.goToClimbDownPos();
                 }));
 
     operator
@@ -224,11 +232,12 @@ public class RobotContainer {
 
     operator
         .x()
-        .whileTrue(
-            new InstantCommand(
-                () -> {
-                  arm.goToShootPos();
-                }));
+        .whileTrue(shootButtonBinding())
+        .onFalse(
+            new ParallelCommandGroup(
+                new InstantCommand(() -> arm.goToShootPos()),
+                new InstantCommand(() -> intake.zero()),
+                new InstantCommand(() -> shooter.zero())));
 
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(

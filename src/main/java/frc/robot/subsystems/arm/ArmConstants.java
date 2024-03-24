@@ -25,8 +25,8 @@ public class ArmConstants {
   public static final double k_armI = 0.0;
   public static final double k_armD = 0.0;
 
-  public static final double k_maxVelocity = 1;//use 0 to 1
-  public static final double k_maxAcceleration = 0.3;//use 0 to 1
+  public static final double k_maxVelocity = 1; // use 0 to 1
+  public static final double k_maxAcceleration = 0.3; // use 0 to 1
 
   public static final Rotation2d k_armEncoderOffset = Rotation2d.fromRotations(0.007469); // 1.342
   public static final double k_armFreeSpeed = 5676.0 * k_velocityConversionFactor;
@@ -39,7 +39,7 @@ public class ArmConstants {
   public static final ProfiledPIDController k_armPID =
       new ProfiledPIDController(0.2, 0.0, 0.0, k_trapezoidalConstraints);
 
-  public static final double k_climbUpSetpoint = 0.0;
+  public static final double k_climbUpSetpoint = 0.23;
   // public static final double k_climbDownSetpoint = 0.0;
   public static final double k_ampSetpoint = 0.18; // 0.18
   public static final double k_shootSetpoint = 0.0; // 0189998
@@ -48,7 +48,7 @@ public class ArmConstants {
   public static final double k_armDeadband = 0.1;
   // public static final double k_upperBoundAmp = 0.18000; // + k_armEncoderOffset.getRotations();
 
-  public static final double k_upperBound = 2.0; // 0.194179
+  public static final double k_upperBound = 0.23; // 0.194179
   public static final double k_upperBoundNormal = 0.966363;
   public static final double k_lowerBound = 0.0; // + k_armEncoderOffset.getRotations();
 }
