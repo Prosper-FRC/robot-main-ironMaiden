@@ -145,7 +145,7 @@ public class LEDs extends SubsystemBase {
 
   // Blinking Orange twice will be the signal for note detection when inside the indexer
   public void blinkLEDsOrange() {
-    if (sensor.getNoteDetected()) {
+    if (sensor.isDetected()) {
       new SequentialCommandGroup(
           new InstantCommand(() -> setLEDsOrange()),
           new WaitCommand(LEDConstants.k_waitTime),
