@@ -48,6 +48,11 @@ public class Shooter extends SubsystemBase {
     rightShootMotor.set(-ShooterConstants.k_shootAmp);
   }
 
+  public void setSlowSpeedReverse() {
+    leftShootMotor.set(-ShooterConstants.k_shootReverseSlow);
+    rightShootMotor.set(-ShooterConstants.k_shootReverseSlow);
+  }
+
   // Set motor speeds to zero
   public void zero() {
     leftShootMotor.set(ShooterConstants.k_shootZero);

@@ -6,33 +6,39 @@ package frc.robot.subsystems.leds;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.intake.Intake;
 
 public class Sensor extends SubsystemBase {
   /** Creates a new Sensor. */
-  private static Intake intake;
+  public static boolean noteDetected = false;
 
-  private static LEDs led;
-
-  private DigitalInput sensor;
+  private static DigitalInput sensor;
 
   public Sensor() {
-    intake = new Intake();
-    sensor = new DigitalInput(LEDConstants.k_DIOPort);
-    led = new LEDs();
+    sensor = new DigitalInput(0);
   }
 
-  public boolean getNoteDetected() {
-    if (sensor.get()) {
-      intake.zero();
-      led.blinkCommand().withTimeout(3);
-      return true;
+  // public boolean getNoteDetected() {
+  //   if (sensor.get()) {
+  //     intake.zero();
+  //     led.blinkCommand().withTimeout(3);
+  //     return true;
+  //   }
+  //   return false;
+  // }
+
+  public static boolean isDetected() {
+    return !sensor.get();
+  }
+
+  public static void getNoteDetected() {
+    if (noteDetected) {
+      System.out.println("Note detected ");
     }
-    return false;
   }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    noteDetected = isDetected();
+    getNoteDetected();
   }
 }
