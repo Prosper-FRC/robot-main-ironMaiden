@@ -9,7 +9,7 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile.Constraints;
 public class ArmConstants {
   public static final int k_armMotorID = 18;
   public static final int k_smartCurrentLimit = 50;
-  public static final double k_armSpeed = 1.0;
+  public static final double k_armSpeed = 0.7;
   public static final double k_climbSpeed = 0.3;
   public static final double k_speedZero = 0.0;
   public static final boolean k_isInverted = false;
@@ -21,9 +21,12 @@ public class ArmConstants {
   public static final double k_positionConversionFactor = k_armGearRatio;
   public static final double k_velocityConversionFactor = k_armGearRatio / 60.0;
 
-  public static final double k_armP = 0.1; // 2.5 on REV ION
+  public static final double k_armP = 20.0; // 2.5 on REV ION
   public static final double k_armI = 0.0;
   public static final double k_armD = 0.0;
+
+  public static final double k_maxVelocity = 9000;
+  public static final double k_maxAcceleration = 20;
 
   public static final Rotation2d k_armEncoderOffset = Rotation2d.fromRotations(0.007469); // 1.342
   public static final double k_armFreeSpeed = 5676.0 * k_velocityConversionFactor;
@@ -34,17 +37,17 @@ public class ArmConstants {
   public static final Constraints k_trapezoidalConstraints =
       new TrapezoidProfile.Constraints(1.0, 2.0);
   public static final ProfiledPIDController k_armPID =
-      new ProfiledPIDController(0.0, 0.0, 0.0, k_trapezoidalConstraints);
+      new ProfiledPIDController(0.2, 0.0, 0.0, k_trapezoidalConstraints);
 
   public static final double k_intakeSetpoint = 0.0;
-  public static final double k_ampSetpoint = 0.18000;
+  public static final double k_ampSetpoint = 0.18; // 0.18
   public static final double k_shootSetpoint = 0.0189998;
   public static final double k_tolerance = 0.1;
 
   public static final double k_armDeadband = 0.1;
   // public static final double k_upperBoundAmp = 0.18000; // + k_armEncoderOffset.getRotations();
 
-  public static final double k_upperBound = 0.190180; // 0.194179
+  public static final double k_upperBound = 0.18; // 0.194179
   public static final double k_upperBoundNormal = 0.966363;
-  public static final double k_lowerBound = 0.01; // + k_armEncoderOffset.getRotations();
+  public static final double k_lowerBound = 0.0; // + k_armEncoderOffset.getRotations();
 }

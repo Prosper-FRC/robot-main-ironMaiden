@@ -12,6 +12,7 @@ import com.revrobotics.RelativeEncoder;
 import edu.wpi.first.math.controller.ArmFeedforward;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -26,6 +27,7 @@ public class Arm extends SubsystemBase {
   private RelativeEncoder armEncoder;
   private ProfiledPIDController armController;
   private ArmFeedforward feedForward;
+  private double setpoint = ArmConstants.k_lowerBound;
 
   private boolean isClimb = false;
   private boolean isAmp = false;
@@ -37,7 +39,15 @@ public class Arm extends SubsystemBase {
     armMotor = new CANSparkMax(ArmConstants.k_armMotorID, MotorType.kBrushless);
 
     armEncoder = armMotor.getEncoder();
-    armController = ArmConstants.k_armPID;
+
+    // armController = ArmConstants.k_armPID;
+    armController =
+        new ProfiledPIDController(
+            ArmConstants.k_armP,
+            ArmConstants.k_armI,
+            ArmConstants.k_armD,
+            new TrapezoidProfile.Constraints(
+                ArmConstants.k_maxVelocity, ArmConstants.k_maxAcceleration));
     feedForward = ArmConstants.k_armFeedforward;
 
     configure();
@@ -45,17 +55,23 @@ public class Arm extends SubsystemBase {
 
   // Moves arm down to pick up note
   public void goToIntakePos() {
-    setSpeed(setPID(ArmConstants.k_intakeSetpoint));
+    setpoint = ArmConstants.k_intakeSetpoint;
+    armController.setGoal(ArmConstants.k_intakeSetpoint);
+    System.out.println("Going to intake pos");
   }
 
   // Moves arm up to shoot note
   public void goToShootPos() {
-    setSpeed(setPID(ArmConstants.k_shootSetpoint));
+    setpoint = ArmConstants.k_shootSetpoint;
+    armController.setGoal(ArmConstants.k_shootSetpoint);
+    System.out.println("Going to shoot pos");
   }
-
   // Moves arm to amp position to shoot note
+  double pidVal;
+
   public void goToAmpPos() {
-    setSpeed(setPID(ArmConstants.k_ampSetpoint));
+    setpoint = ArmConstants.k_ampSetpoint;
+    System.out.println("Going to amp pos");
   }
 
   // Depending on the value of the joysticks, move the arm up or down (manual)
@@ -108,12 +124,7 @@ public class Arm extends SubsystemBase {
   public void setSpeed(double armSpeed) {
     if (isInBound(getPosition(), armSpeed) && Math.abs(armSpeed) > 0)
       armMotor.set(armSpeed); // armMotor.set(armSpeed + setFeedforward())
-    else armMotor.set(0 / 3.5);
-  }
-
-  // Calculate the motor speed based on PIDs
-  public double setPID(double setpoint) {
-    return armController.calculate(getPosition().getRotations(), getTicksToRotations(setpoint));
+    else armMotor.set(0.0);
   }
 
   // Calculate the speed to move the arm up and down at the same speed (by taking into account
@@ -170,6 +181,9 @@ public class Arm extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+
+    setSpeed(armController.calculate(getPosition().getRotations(), setpoint));
+
     SmartDashboard.putNumber("Encoder Val", getPosition().getRotations());
     SmartDashboard.putNumber("Arm Speed", armMotor.get());
     SmartDashboard.putNumber("Arm Current", armMotor.getOutputCurrent());
@@ -178,6 +192,10 @@ public class Arm extends SubsystemBase {
     SmartDashboard.putNumber("Arm FF", setFeedforward());
     SmartDashboard.putBoolean("isClimb", isClimb);
     SmartDashboard.putBoolean("isAmp", isAmp);
+    SmartDashboard.putNumber(
+        "PID output", armController.calculate(getPosition().getRotations(), setpoint));
+    SmartDashboard.putNumber("Encoder pos", getPosition().getRotations());
+    SmartDashboard.putNumber("Setpoint in rotations", setpoint);
   }
 
   // --------------------------------------------------Autonomous

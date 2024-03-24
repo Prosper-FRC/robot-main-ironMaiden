@@ -23,7 +23,6 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.auto.Autonomous;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.arm.Arm;
-import frc.robot.subsystems.arm.ArmCommand;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
 import frc.robot.subsystems.drive.GyroIOPigeon2;
@@ -68,7 +67,7 @@ public class RobotContainer {
     shooter = new Shooter(intake);
 
     // Manual:
-    arm.setDefaultCommand(new ArmCommand(() -> operator.getRightY(), arm));
+    // arm.setDefaultCommand(new ArmCommand(() -> operator.getRightY(), arm));
 
     switch (Constants.currentMode) {
       case REAL:
@@ -191,6 +190,22 @@ public class RobotContainer {
             new InstantCommand(
                 () -> {
                   arm.climbOn();
+                }));
+
+    operator
+        .b()
+        .whileTrue(
+            new InstantCommand(
+                () -> {
+                  arm.goToAmpPos();
+                }));
+
+    operator
+        .y()
+        .whileTrue(
+            new InstantCommand(
+                () -> {
+                  arm.goToIntakePos();
                 }));
 
     drive.setDefaultCommand(
