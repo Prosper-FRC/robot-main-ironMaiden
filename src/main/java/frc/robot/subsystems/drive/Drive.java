@@ -42,14 +42,15 @@ import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 
 public class Drive extends SubsystemBase {
-  private static final double MAX_LINEAR_SPEED = Units.feetToMeters(14.5);
-  private static final double TRACK_WIDTH_X = Units.inchesToMeters(20.0);
-  private static final double TRACK_WIDTH_Y = Units.inchesToMeters(20.0);
+  private static final double MAX_LINEAR_SPEED = Units.feetToMeters(17.1);
+  private static final double TRACK_WIDTH_X = Units.inchesToMeters(25.0);
+  private static final double TRACK_WIDTH_Y = Units.inchesToMeters(25.0);
   private static final double DRIVE_BASE_RADIUS =
       Math.hypot(TRACK_WIDTH_X / 2.0, TRACK_WIDTH_Y / 2.0);
   private static final double MAX_ANGULAR_SPEED = MAX_LINEAR_SPEED / DRIVE_BASE_RADIUS;
 
   private final GyroIO gyroIO;
+  private static GyroIOPigeon2 gyroIOPigeon2;
   private final GyroIOInputsAutoLogged gyroInputs = new GyroIOInputsAutoLogged();
   private final Module[] modules = new Module[4]; // FL, FR, BL, BR
   private final SysIdRoutine sysId;
@@ -77,6 +78,7 @@ public class Drive extends SubsystemBase {
     modules[2] = new Module(blModuleIO, 2);
     modules[3] = new Module(brModuleIO, 3);
     this.gyroIO = gyroIO;
+    gyroIOPigeon2 = new GyroIOPigeon2();
 
     // ----------------------------------------------------[AutoBuilder
     // Configuration]---------------------------------------------------------
@@ -251,6 +253,14 @@ public class Drive extends SubsystemBase {
   /** Returns the current odometry rotation. */
   public Rotation2d getRotation() {
     return getPose().getRotation();
+  }
+
+  public Rotation2d gyroValue() {
+    return rawGyroRotation;
+  }
+
+  public static void resetGyro() {
+    gyroIOPigeon2.resetGyro();
   }
 
   /** Resets the current odometry pose. */

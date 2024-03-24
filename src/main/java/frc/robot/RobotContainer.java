@@ -19,6 +19,9 @@ import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.auto.Autonomous;
 import frc.robot.commands.DriveCommands;
@@ -60,12 +63,22 @@ public class RobotContainer {
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
 
+  public Command ampButtonBinding() {
+    return new SequentialCommandGroup(
+        new ParallelCommandGroup(new InstantCommand(() -> shooter.setAmpSpeed())),
+        new InstantCommand(() -> arm.goToAmpPos()),
+        new WaitCommand(1.0),
+        new InstantCommand(() -> intake.intake()));
+  }
+  ;
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
     intake = new Intake();
     shooter = new Shooter(intake);
 
+    leds.ladyChaser();
     // Manual:
     // arm.setDefaultCommand(new ArmCommand(() -> operator.getRightY(), arm));
 
@@ -148,13 +161,13 @@ public class RobotContainer {
 
     // 'a' button outtakes note
     operator
-        .leftTrigger()
+        .rightBumper()
         .whileTrue(new InstantCommand(() -> intake.outtake()))
         .onFalse(new InstantCommand(() -> intake.zero()));
 
-    // Left bumper shoots Speaker, now shootSpeaker also includes moving intake also.
+    /*// Left bumper shoots Speaker, now shootSpeaker also includes moving intake also.
     operator
-        .rightBumper()
+        .leftTrigger()
         .whileTrue(shooter.shootSpeaker())
         .onFalse(
             new InstantCommand(
@@ -172,7 +185,7 @@ public class RobotContainer {
                 () -> {
                   shooter.zero();
                   intake.zero();
-                }));
+                }));*/
 
     operator
         .povUp()
@@ -194,29 +207,40 @@ public class RobotContainer {
 
     operator
         .b()
-        .whileTrue(
-            new InstantCommand(
-                () -> {
-                  arm.goToAmpPos();
-                }));
+        .whileTrue(ampButtonBinding())
+        .onFalse(
+            new ParallelCommandGroup(
+                new InstantCommand(() -> arm.goToShootPos()),
+                new InstantCommand(() -> intake.zero()),
+                new InstantCommand(() -> shooter.zero())));
 
     operator
         .y()
         .whileTrue(
             new InstantCommand(
                 () -> {
-                  arm.goToIntakePos();
+                  arm.goToClimbUpPos();
+                }));
+
+    operator
+        .x()
+        .whileTrue(
+            new InstantCommand(
+                () -> {
+                  arm.goToShootPos();
                 }));
 
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
-            drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> -driver.getRightX()));
+            drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> driver.getRightX()));
 
     driver.leftBumper().onTrue(leds.toggleOrange());
 
     driver.rightBumper().onTrue(leds.toggleBlue());
 
     driver.rightTrigger().onTrue(new InstantCommand(() -> arm.climbOff()));
+
+    driver.a().onTrue(new InstantCommand(() -> Drive.resetGyro()));
 
     /*
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));

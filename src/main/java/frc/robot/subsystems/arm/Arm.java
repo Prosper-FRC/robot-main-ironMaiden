@@ -54,10 +54,10 @@ public class Arm extends SubsystemBase {
   }
 
   // Moves arm down to pick up note
-  public void goToIntakePos() {
-    setpoint = ArmConstants.k_intakeSetpoint;
-    armController.setGoal(ArmConstants.k_intakeSetpoint);
-    System.out.println("Going to intake pos");
+  public void goToClimbUpPos() {
+    setpoint = ArmConstants.k_climbUpSetpoint;
+    armController.setGoal(ArmConstants.k_climbUpSetpoint);
+    System.out.println("Going to climb up pos");
   }
 
   // Moves arm up to shoot note

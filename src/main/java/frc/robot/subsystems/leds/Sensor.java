@@ -12,16 +12,20 @@ public class Sensor extends SubsystemBase {
   /** Creates a new Sensor. */
   private static Intake intake;
 
+  private static LEDs led;
+
   private DigitalInput sensor;
 
   public Sensor() {
     intake = new Intake();
     sensor = new DigitalInput(LEDConstants.k_DIOPort);
+    led = new LEDs();
   }
 
   public boolean getNoteDetected() {
     if (sensor.get()) {
       intake.zero();
+      led.blinkCommand().withTimeout(3);
       return true;
     }
     return false;
