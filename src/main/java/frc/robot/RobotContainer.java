@@ -197,7 +197,10 @@ public class RobotContainer {
 
     operator
         .povUp()
-        .whileTrue(new InstantCommand(() -> shooter.setSpeedReverse()))
+        .whileTrue(
+            new ParallelCommandGroup(
+                new InstantCommand(() -> shooter.setSlowSpeedReverse()),
+                new InstantCommand(() -> intake.outtake())))
         .onFalse(
             new InstantCommand(
                 () -> {
