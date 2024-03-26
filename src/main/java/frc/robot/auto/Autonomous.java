@@ -79,9 +79,15 @@ public class Autonomous extends SubsystemBase {
   }
 
   public Command SHOOT_MOBILITY() {
-    return new SequentialCommandGroup(cancel(), moveField(), cancelDrive(), SHOOT(), cancel());
+    return new SequentialCommandGroup(
+        cancel(), moveField(), cancelDrive(), SHOOT(), cancel(), getOut(), cancelDrive());
   }
-
+/*
+  public Command SHOOT_MOBILITY_LOAD() {
+    return new ParallelCommandGroup(new SequentialCommandGroup(
+        cancel(), moveField(), cancelDrive(), SHOOT(), cancel(), rotate(), getOut(), cancelDrive()), intake()); 
+  }
+*/
   // ---------------------------------------------------------------[Commands]--------------------------------------------------------
   public Command SHOOT() {
     return new SequentialCommandGroup(shootSpeaker(), wait(1.5), cancel());
@@ -108,9 +114,16 @@ public class Autonomous extends SubsystemBase {
         .withTimeout(0.5);
   }
 
-  public Command getOut() {
-    return DriveCommands.joystickDrive(drive, () -> Units.feetToMeters(0.908),() -> Units.feetToMeters(1.782), () -> 0.0)
+  public Command rotate() {
+    return DriveCommands.joystickDrive(
+            drive, () -> Units.feetToMeters(0.0), () -> Units.feetToMeters(0.0), () -> 63.0)
         .withTimeout(0.5);
+  }
+
+  public Command getOut() {
+    return DriveCommands.joystickDrive(
+            drive, () -> Units.feetToMeters(0.908), () -> Units.feetToMeters(1.782), () -> 0.0)
+        .withTimeout(2.0);
   }
 
   public Command shootSpeaker() {

@@ -181,7 +181,7 @@ public class RobotContainer {
         .whileTrue(new InstantCommand(() -> intake.outtake()))
         .onFalse(new InstantCommand(() -> intake.zero()));
 
-    driver.y().onTrue(autonomous.moveField());
+    driver.y().onTrue(autonomous.SHOOT_MOBILITY());
 
     /*// Left bumper shoots Speaker, now shootSpeaker also includes moving intake also.
     operator
