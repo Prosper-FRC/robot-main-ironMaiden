@@ -37,7 +37,7 @@ public class LEDs extends SubsystemBase {
     LEDs.setData(LEDBuffer);
     LEDs.start();
 
-    setLEDsPurple();
+    ladyChaser();
   }
 
   public void blink() {

@@ -6,26 +6,21 @@ package frc.robot.subsystems.leds;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.intake.Intake;
 
 public class Sensor extends SubsystemBase {
   /** Creates a new Sensor. */
   public static boolean noteDetected = false;
 
   private static DigitalInput sensor;
+  private LEDs led;
+  private static Intake intake;
 
   public Sensor() {
     sensor = new DigitalInput(0);
   }
 
-  // public boolean getNoteDetected() {
-  //   if (sensor.get()) {
-  //     intake.zero();
-  //     led.blinkCommand().withTimeout(3);
-  //     return true;
-  //   }
-  //   return false;
-  // }
-
+  
   public static boolean isDetected() {
     return !sensor.get();
   }
@@ -36,9 +31,18 @@ public class Sensor extends SubsystemBase {
     }
   }
 
+  public static void stopIntake(){
+    if(isDetected()){
+      intake.zero();
+    }
+  }
+
   @Override
   public void periodic() {
     noteDetected = isDetected();
     getNoteDetected();
+    if(noteDetected){
+      led.blinkCommand().withTimeout(2);
+    }
   }
 }
