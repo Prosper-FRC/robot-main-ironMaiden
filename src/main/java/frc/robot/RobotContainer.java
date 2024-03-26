@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.auto.Autonomous;
+import frc.robot.auto.DriveDistance;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
@@ -80,6 +81,10 @@ public class RobotContainer {
   }
   ;
 
+  private final Command m_mobilityAuton() {
+    return new DriveDistance(drive);
+  }
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
@@ -87,6 +92,7 @@ public class RobotContainer {
     shooter = new Shooter(intake);
 
     leds.ladyChaser();
+
     // Manual:
     // arm.setDefaultCommand(new ArmCommand(() -> operator.getRightY(), arm));
 
@@ -125,7 +131,7 @@ public class RobotContainer {
         break;
     }
 
-    autonomous = new Autonomous(intake, shooter);
+    autonomous = new Autonomous(intake, shooter, drive);
 
     // Set up auto routines
     NamedCommands.registerCommand("Run Shoot", autonomous.SHOOT());
@@ -140,6 +146,8 @@ public class RobotContainer {
     // autoChooser.addOption("Auto: PL-MB-2P", autonomous.PL_MB_2P());
     // autoChooser.addOption("Auto: Auto PL-MB-1L", AutoBuilder.buildAuto("PL-M-1L"));
     autoChooser.addOption("Auto: Test", autonomous.test());
+    autoChooser.addOption("Mobility", autonomous.MOBILITY());
+    autoChooser.addOption("Mobility-Shoot", autonomous.SHOOT_MOBILITY());
 
     // Configure the button bindings
     configureButtonBindings();
@@ -172,6 +180,8 @@ public class RobotContainer {
         .rightBumper()
         .whileTrue(new InstantCommand(() -> intake.outtake()))
         .onFalse(new InstantCommand(() -> intake.zero()));
+
+    driver.y().onTrue(autonomous.moveField());
 
     /*// Left bumper shoots Speaker, now shootSpeaker also includes moving intake also.
     operator

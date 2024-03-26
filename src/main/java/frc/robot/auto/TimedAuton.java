@@ -4,18 +4,15 @@
 
 package frc.robot.auto;
 
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class TimedAuton extends SubsystemBase {
   /** Creates a new TimedAuton. */
 
   /*private final Command mobility() {
-    
+
   }*/
-  public TimedAuton() {
-    
-  }
+  public TimedAuton() {}
 
   /*public Command DriveDistance() {
 

@@ -6,12 +6,16 @@ package frc.robot.auto;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.PathPlannerPath;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.commands.DriveCommands;
+import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.shooter.Shooter;
 
@@ -20,11 +24,13 @@ public class Autonomous extends SubsystemBase {
   private final Intake intake;
 
   private final Shooter shooter;
+  private final Drive drive;
 
-  public Autonomous(Intake intake, Shooter shooter) {
+  public Autonomous(Intake intake, Shooter shooter, Drive drive) {
 
     this.intake = intake;
     this.shooter = shooter;
+    this.drive = drive;
   }
 
   // ---------------------------------------------------------------[Auton Path
@@ -68,6 +74,14 @@ public class Autonomous extends SubsystemBase {
         SHOOT());
   }
 
+  public Command MOBILITY() {
+    return new SequentialCommandGroup(cancel(), moveField());
+  }
+
+  public Command SHOOT_MOBILITY() {
+    return new SequentialCommandGroup(cancel(), moveField(), cancelDrive(), SHOOT(), cancel());
+  }
+
   // ---------------------------------------------------------------[Commands]--------------------------------------------------------
   public Command SHOOT() {
     return new SequentialCommandGroup(shootSpeaker(), wait(1.5), cancel());
@@ -75,6 +89,28 @@ public class Autonomous extends SubsystemBase {
 
   public Command cancel() {
     return new ParallelCommandGroup(zeroShoot(), zeroIntake());
+  }
+
+  public Command cancelDrive() {
+    return DriveCommands.joystickDrive(drive, () -> 0.0, () -> 0.0, () -> 0.0).withTimeout(1);
+  }
+
+  public Command move() {
+    return new InstantCommand(
+        () ->
+            drive.runVelocity(
+                ChassisSpeeds.fromRobotRelativeSpeeds(
+                    0.0, Units.feetToMeters(5.0), 0.0, drive.gyroValue())));
+  }
+
+  public Command moveField() {
+    return DriveCommands.joystickDrive(drive, () -> Units.feetToMeters(2.0), () -> 0.0, () -> 0.0)
+        .withTimeout(0.5);
+  }
+
+  public Command getOut() {
+    return DriveCommands.joystickDrive(drive, () -> Units.feetToMeters(0.908),() -> Units.feetToMeters(1.782), () -> 0.0)
+        .withTimeout(0.5);
   }
 
   public Command shootSpeaker() {
