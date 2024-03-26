@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.auto.Autonomous;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.SmartFeed;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -33,7 +34,6 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkMax;
 import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.leds.LEDs;
 import frc.robot.subsystems.shooter.Shooter;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -53,12 +53,12 @@ public class RobotContainer {
   private static final CommandXboxController operator =
       new CommandXboxController(Constants.k_operatorID);
 
-  private static final LEDs leds = new LEDs();
-  public static final Arm arm = new Arm(operator.getHID(), leds);
+  public static final Arm arm = new Arm(operator.getHID());
 
   private static Intake intake;
   private static Shooter shooter;
   private static Autonomous autonomous;
+  private static SmartFeed smartFeed;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -85,8 +85,8 @@ public class RobotContainer {
 
     intake = new Intake();
     shooter = new Shooter(intake);
+    smartFeed = new SmartFeed(intake);
 
-    leds.ladyChaser();
     // Manual:
     // arm.setDefaultCommand(new ArmCommand(() -> operator.getRightY(), arm));
 
@@ -165,6 +165,7 @@ public class RobotContainer {
                 () -> {
                   intake.intake();
                 }))
+        .whileTrue(smartFeed)
         .onFalse(intake.retract());
 
     // 'a' button outtakes note
@@ -245,12 +246,6 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> driver.getRightX()));
-
-    driver.leftBumper().onTrue(leds.toggleOrange());
-
-    driver.rightBumper().onTrue(leds.toggleBlue());
-
-    driver.rightTrigger().onTrue(new InstantCommand(() -> arm.climbOff()));
 
     driver.a().onTrue(new InstantCommand(() -> Drive.resetGyro()));
 

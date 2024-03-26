@@ -16,12 +16,9 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.subsystems.leds.LEDs;
 
 public class Arm extends SubsystemBase {
   /** Creates a new Climb. */
-  private LEDs leds;
-
   private CANSparkMax armMotor;
 
   private RelativeEncoder armEncoder;
@@ -32,9 +29,7 @@ public class Arm extends SubsystemBase {
   private boolean isClimb = false;
   private boolean isAmp = false;
 
-  public Arm(XboxController controller, LEDs leds) {
-
-    this.leds = leds;
+  public Arm(XboxController controller) {
 
     armMotor = new CANSparkMax(ArmConstants.k_armMotorID, MotorType.kBrushless);
 
@@ -104,16 +99,6 @@ public class Arm extends SubsystemBase {
   }
 
   // Toggling between climb and regular arm mode because the arm speeds are different for these two
-  public void climbOn() {
-    isClimb = true;
-    leds.setLEDsRed();
-  }
-
-  public void climbOff() {
-    isClimb = false;
-
-    leds.setLEDsPurple();
-  }
 
   private double isAmpUpperBound() {
     if (isClimb) {
