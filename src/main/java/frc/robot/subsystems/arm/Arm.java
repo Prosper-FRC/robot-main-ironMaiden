@@ -16,9 +16,12 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.subsystems.leds.LEDs;
 
 public class Arm extends SubsystemBase {
   /** Creates a new Climb. */
+  private LEDs leds;
+
   private CANSparkMax armMotor;
 
   private RelativeEncoder armEncoder;
@@ -29,7 +32,9 @@ public class Arm extends SubsystemBase {
   private boolean isClimb = false;
   private boolean isAmp = false;
 
-  public Arm(XboxController controller) {
+  public Arm(XboxController controller, LEDs leds) {
+
+    this.leds = leds;
 
     armMotor = new CANSparkMax(ArmConstants.k_armMotorID, MotorType.kBrushless);
 
@@ -99,7 +104,6 @@ public class Arm extends SubsystemBase {
   }
 
   // Toggling between climb and regular arm mode because the arm speeds are different for these two
-
   private double isAmpUpperBound() {
     if (isClimb) {
       return ArmConstants.k_upperBoundNormal;
@@ -108,19 +112,6 @@ public class Arm extends SubsystemBase {
     return ArmConstants.k_upperBound;
   }
 
-  /*public double toggleAmp() {
-  if (isAmp) {
-    return ArmConstants.k_upperBoundAmp;
-  }
-  else {
-    return ArmConstants.k_upperBoundNormal;
-  }*/
-
-  /*public void runClimb() {
-    // setSpeed(Math.copySign(ArmConstants.k_climbSpeed, -1));
-    setSpeed(-0.5);
-  }*/
-
   // Sets the speed of the motors if it is within the bounds of the robot
   public void setSpeed(double armSpeed) {
     if (isInBound(getPosition(), armSpeed) && Math.abs(armSpeed) > 0)
@@ -128,8 +119,7 @@ public class Arm extends SubsystemBase {
     else armMotor.set(0.0);
   }
 
-  // Calculate the speed to move the arm up and down at the same speed (by taking into account
-  // gravity)
+  // Calculate the speed to move the arm up and down at the same speed (by taking into account gravity)
   public double setFeedforward() {
     return feedForward.calculate(
             getPosition().getRadians() + ArmConstants.k_armEncoderOffset.getRadians(), 0.0)
