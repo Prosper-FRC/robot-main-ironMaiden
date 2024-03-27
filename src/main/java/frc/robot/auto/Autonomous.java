@@ -75,18 +75,36 @@ public class Autonomous extends SubsystemBase {
   }
 
   public Command MOBILITY() {
-    return new SequentialCommandGroup(cancel(), moveField());
+    return new SequentialCommandGroup(cancel(), moveField(2.0, 0.0, 0.5));
   }
 
   public Command SHOOT_MOBILITY() {
     return new SequentialCommandGroup(
-        cancel(), moveField(), cancelDrive(), SHOOT(), cancel(), moveField(), cancelDrive());
+        cancel(),
+        moveField(2.0, 0.0, 0.5),
+        cancelDrive(),
+        SHOOT(),
+        cancel(),
+        moveField(2.0, 0.0, 0.5),
+        cancelDrive());
   }
 
   public Command SHOOT_MOBILITY_LOAD() {
     return new ParallelCommandGroup(
         new SequentialCommandGroup(
-            cancel(), moveField(), cancelDrive(), SHOOT(), cancel(), rotate()));
+            cancel(),
+            moveField(2.0, 0.0, 0.5),
+            cancelDrive(),
+            SHOOT(),
+            cancel(),
+            rotate(-0.05, 0.585),
+            moveField(0.908, 1.782, 1.8),
+            moveField(-0.908, -1.782, 1.8),
+            rotate(0.05, 0.585),
+            cancelDrive(),
+            SHOOT()),
+        new SequentialCommandGroup(
+            wait(6.0), runIntake(), wait(1.5), runRetract(), wait(0.75), zeroIntake()));
   }
 
   // ---------------------------------------------------------------[Commands]--------------------------------------------------------
@@ -110,28 +128,23 @@ public class Autonomous extends SubsystemBase {
                     0.0, Units.feetToMeters(5.0), 0.0, drive.gyroValue())));
   }
 
-  public Command moveField() {
-    return DriveCommands.joystickDrive(drive, () -> Units.feetToMeters(2.0), () -> 0.0, () -> 0.0)
-        .withTimeout(0.5);
+  public Command moveField(double x, double y, double sec) {
+    return DriveCommands.joystickDrive(
+            drive, () -> Units.feetToMeters(x), () -> Units.feetToMeters(y), () -> 0.0)
+        .withTimeout(sec);
   }
 
-  public Command rotate() {
+  public Command rotate(double rot, double sec) {
     return DriveCommands.joystickDrive(
             drive,
             () -> Units.feetToMeters(0.0),
             () -> Units.feetToMeters(0.0),
             () ->
-                0.1
+                rot
                     * (Units.feetToMeters(17.1)
                         / (Math.hypot(
                             Units.inchesToMeters(25.0) / 2.0, Units.inchesToMeters(25.0) / 2.0))))
-        .withTimeout(1.5);
-  }
-
-  public Command getOut() {
-    return DriveCommands.joystickDrive(
-            drive, () -> Units.feetToMeters(0.908), () -> Units.feetToMeters(1.782), () -> 0.0)
-        .withTimeout(2.0);
+        .withTimeout(sec);
   }
 
   public Command shootSpeaker() {
@@ -140,6 +153,14 @@ public class Autonomous extends SubsystemBase {
 
   public Command wait(double seconds) {
     return new WaitCommand(seconds);
+  }
+
+  public Command runIntake() {
+    return new InstantCommand(() -> intake.intake());
+  }
+
+  public Command runRetract() {
+    return new InstantCommand(() -> intake.retract());
   }
 
   public Command zeroShoot() {
