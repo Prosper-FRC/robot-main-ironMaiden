@@ -24,8 +24,8 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.auto.Autonomous;
+import frc.robot.auto.DriveDistance;
 import frc.robot.commands.DriveCommands;
-import frc.robot.commands.SmartFeed;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -34,6 +34,7 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkMax;
 import frc.robot.subsystems.intake.Intake;
+import frc.robot.subsystems.leds.LEDs;
 import frc.robot.subsystems.shooter.Shooter;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -53,12 +54,12 @@ public class RobotContainer {
   private static final CommandXboxController operator =
       new CommandXboxController(Constants.k_operatorID);
 
-  public static final Arm arm = new Arm(operator.getHID());
+  private static final LEDs leds = new LEDs();
+  public static final Arm arm = new Arm(operator.getHID(), leds);
 
   private static Intake intake;
   private static Shooter shooter;
   private static Autonomous autonomous;
-  private static SmartFeed smartFeed;
 
   // Dashboard inputs
   private final LoggedDashboardChooser<Command> autoChooser;
@@ -80,12 +81,17 @@ public class RobotContainer {
   }
   ;
 
+  private final Command m_mobilityAuton() {
+    return new DriveDistance(drive);
+  }
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
     intake = new Intake();
     shooter = new Shooter(intake);
-    smartFeed = new SmartFeed(intake);
+
+    leds.ladyChaser();
 
     // Manual:
     // arm.setDefaultCommand(new ArmCommand(() -> operator.getRightY(), arm));
@@ -125,7 +131,7 @@ public class RobotContainer {
         break;
     }
 
-    autonomous = new Autonomous(intake, shooter);
+    autonomous = new Autonomous(intake, shooter, drive);
 
     // Set up auto routines
     NamedCommands.registerCommand("Run Shoot", autonomous.SHOOT());
@@ -140,6 +146,9 @@ public class RobotContainer {
     // autoChooser.addOption("Auto: PL-MB-2P", autonomous.PL_MB_2P());
     // autoChooser.addOption("Auto: Auto PL-MB-1L", AutoBuilder.buildAuto("PL-M-1L"));
     autoChooser.addOption("Auto: Test", autonomous.test());
+    autoChooser.addOption("Mobility", autonomous.MOBILITY());
+    autoChooser.addOption("Mobility-Shoot", autonomous.SHOOT_MOBILITY());
+    autoChooser.addOption("2P-Mobility", autonomous.SHOOT_MOBILITY_LOAD());
 
     // Configure the button bindings
     configureButtonBindings();
@@ -165,7 +174,6 @@ public class RobotContainer {
                 () -> {
                   intake.intake();
                 }))
-        .whileTrue(smartFeed)
         .onFalse(intake.retract());
 
     // 'a' button outtakes note
@@ -173,6 +181,8 @@ public class RobotContainer {
         .rightBumper()
         .whileTrue(new InstantCommand(() -> intake.outtake()))
         .onFalse(new InstantCommand(() -> intake.zero()));
+
+    driver.y().onTrue(autonomous.SHOOT_MOBILITY());
 
     /*// Left bumper shoots Speaker, now shootSpeaker also includes moving intake also.
     operator
@@ -198,10 +208,7 @@ public class RobotContainer {
 
     operator
         .povUp()
-        .whileTrue(
-            new ParallelCommandGroup(
-                new InstantCommand(() -> shooter.setSlowSpeedReverse()),
-                new InstantCommand(() -> intake.outtake())))
+        .whileTrue(new InstantCommand(() -> shooter.setSpeedReverse()))
         .onFalse(
             new InstantCommand(
                 () -> {
@@ -246,6 +253,12 @@ public class RobotContainer {
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> driver.getRightX()));
+
+    driver.leftBumper().onTrue(autonomous.SHOOT_MOBILITY_LOAD());
+
+    driver.rightBumper().onTrue(leds.toggleBlue());
+
+    driver.rightTrigger().onTrue(new InstantCommand(() -> arm.climbOff()));
 
     driver.a().onTrue(new InstantCommand(() -> Drive.resetGyro()));
 
