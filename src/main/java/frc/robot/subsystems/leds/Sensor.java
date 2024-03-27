@@ -20,7 +20,6 @@ public class Sensor extends SubsystemBase {
     sensor = new DigitalInput(0);
   }
 
-  
   public static boolean isDetected() {
     return !sensor.get();
   }
@@ -31,8 +30,8 @@ public class Sensor extends SubsystemBase {
     }
   }
 
-  public static void stopIntake(){
-    if(isDetected()){
+  public static void stopIntake() {
+    if (isDetected()) {
       intake.zero();
     }
   }
@@ -41,7 +40,7 @@ public class Sensor extends SubsystemBase {
   public void periodic() {
     noteDetected = isDetected();
     getNoteDetected();
-    if(noteDetected){
+    if (noteDetected) {
       led.blinkCommand().withTimeout(2);
     }
   }

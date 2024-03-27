@@ -253,7 +253,7 @@ public class RobotContainer {
         DriveCommands.joystickDrive(
             drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> driver.getRightX()));
 
-    driver.leftBumper().onTrue(leds.toggleOrange());
+    driver.leftBumper().onTrue(autonomous.SHOOT_MOBILITY_LOAD());
 
     driver.rightBumper().onTrue(leds.toggleBlue());
 
