@@ -104,7 +104,7 @@ public class Autonomous extends SubsystemBase {
             cancelDrive(),
             SHOOT()),
         new SequentialCommandGroup(
-            wait(6.0), runIntake(), wait(1.5), runRetract(), wait(0.75), zeroIntake()));
+            wait(6.0), runIntake(), wait(1.5), runRetract(), wait(0.1), zeroIntake()));
   }
 
   // ---------------------------------------------------------------[Commands]--------------------------------------------------------
@@ -160,7 +160,7 @@ public class Autonomous extends SubsystemBase {
   }
 
   public Command runRetract() {
-    return new InstantCommand(() -> intake.retract());
+    return new InstantCommand(() -> intake.outtake());
   }
 
   public Command zeroShoot() {
