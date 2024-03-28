@@ -24,7 +24,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.auto.Autonomous;
-import frc.robot.auto.DriveDistance;
+// import frc.robot.auto.DriveDistance;
 import frc.robot.commands.DriveCommands;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
@@ -80,10 +80,6 @@ public class RobotContainer {
         new InstantCommand(() -> intake.intake()));
   }
   ;
-
-  private final Command m_mobilityAuton() {
-    return new DriveDistance(drive);
-  }
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
