@@ -143,6 +143,7 @@ public class RobotContainer {
     autoChooser.addOption("Shoot-PL", autonomous.SHOOT_PL());
     autoChooser.addOption("Mobility-Shoot", autonomous.SHOOT_MOBILITY());
     autoChooser.addOption("2P-Mobility", autonomous.SHOOT_MOBILITY_LOAD());
+    autoChooser.addOption("2-Mobility", autonomous.SHOOT_MOBILITY_2P());
 
     // Configure the button bindings
     configureButtonBindings();

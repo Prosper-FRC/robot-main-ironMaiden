@@ -72,8 +72,7 @@ public class Autonomous extends SubsystemBase {
             wait(6.0), runIntake(), wait(1.5), runRetract(), wait(0.1), zeroIntake()));
   }
 
-  /*
-  public Command SHOOT_MOBILITY_LOAD() {
+  public Command SHOOT_MOBILITY_2P() {
     return new ParallelCommandGroup(
         new SequentialCommandGroup(
             resetGyro(),
@@ -83,15 +82,14 @@ public class Autonomous extends SubsystemBase {
             SHOOT(),
             cancel(),
             rotate(0.05, 0.585),
-            moveField(0.908, 1.782, 1.8),
-            moveField(-0.908, -1.782, 1.8),
+            moveField(0.908, -1.782, 1.8),
+            moveField(-0.908, 1.782, 1.8),
             rotate(-0.05, 0.585),
             cancelDrive(),
             SHOOT()),
         new SequentialCommandGroup(
             wait(6.0), runIntake(), wait(1.5), runRetract(), wait(0.1), zeroIntake()));
   }
-   */
 
   // ---------------------------------------------------------------[Commands]--------------------------------------------------------
   public Command SHOOT() {
@@ -100,6 +98,10 @@ public class Autonomous extends SubsystemBase {
 
   public Command cancel() {
     return new ParallelCommandGroup(zeroShoot(), zeroIntake());
+  }
+
+  public Command resetGyro() {
+    return new InstantCommand(() -> drive.resetGyro());
   }
 
   public Command cancelDrive() {
