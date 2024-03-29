@@ -16,6 +16,6 @@ public class LEDConstants {
   public static boolean k_isBlue = false;
   public static boolean k_isRed = false;
 
-  // Sensor DIO port:
+  // LED DIO port:
   public static final int k_DIOPort = 0;
 }

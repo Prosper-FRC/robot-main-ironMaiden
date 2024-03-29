@@ -15,9 +15,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-// import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
-import org.littletonrobotics.junction.Logger;
 // import org.littletonrobotics.junction.networktables.NT4Publisher;
 // import org.littletonrobotics.junction.wpilog.WPILOGReader;
 // import org.littletonrobotics.junction.wpilog.WPILOGWriter;
@@ -84,7 +82,7 @@ public class Robot extends LoggedRobot {
     // Logger.disableDeterministicTimestamps()
 
     // Start AdvantageKit logger
-    Logger.start();
+    // Logger.start();
 
     // Instantiate our RobotContainer. This will perform all our button bindings,
     // and put our autonomous chooser on the dashboard.
@@ -123,9 +121,7 @@ public class Robot extends LoggedRobot {
 
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {
-    RobotContainer.arm.setSpeed(0);
-  }
+  public void autonomousPeriodic() {}
 
   /** This function is called once when teleop is enabled. */
   @Override

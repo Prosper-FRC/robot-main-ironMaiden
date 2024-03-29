@@ -6,18 +6,20 @@ package frc.robot.subsystems.leds;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RobotContainer;
 import frc.robot.subsystems.intake.Intake;
 
 public class Sensor extends SubsystemBase {
   /** Creates a new Sensor. */
   public static boolean noteDetected = false;
 
+  private boolean noteInitialDetect = false;
+
   private static DigitalInput sensor;
-  private LEDs led;
   private static Intake intake;
 
   public Sensor() {
-    sensor = new DigitalInput(0);
+    sensor = new DigitalInput(1);
   }
 
   public static boolean isDetected() {
@@ -36,12 +38,17 @@ public class Sensor extends SubsystemBase {
     }
   }
 
+  public void detectOff() {
+    noteInitialDetect = false;
+  }
+
   @Override
   public void periodic() {
     noteDetected = isDetected();
-    getNoteDetected();
-    if (noteDetected) {
-      led.blinkCommand().withTimeout(2);
+    // getNoteDetected();
+    if (noteDetected && !noteInitialDetect) {
+      RobotContainer.leds.blinkLEDsPurple();
+      noteInitialDetect = true;
     }
   }
 }

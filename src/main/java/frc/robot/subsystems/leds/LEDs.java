@@ -37,7 +37,8 @@ public class LEDs extends SubsystemBase {
     LEDs.setData(LEDBuffer);
     LEDs.start();
 
-    ladyChaser();
+    setLEDsPurple(); 
+    //ladyChaser();
   }
 
   public void blink() {
@@ -144,23 +145,21 @@ public class LEDs extends SubsystemBase {
   }
 
   // Blinking Orange twice will be the signal for note detection when inside the indexer
-  public void blinkLEDsOrange() {
-    if (sensor.isDetected()) {
-      new SequentialCommandGroup(
-          new InstantCommand(() -> setLEDsOrange()),
-          new WaitCommand(LEDConstants.k_waitTime),
-          new InstantCommand(() -> setLEDsWhite()),
-          new WaitCommand(LEDConstants.k_waitTime),
-          new InstantCommand(() -> setLEDsOrange()),
-          new WaitCommand(LEDConstants.k_waitTime),
-          new InstantCommand(() -> setLEDsWhite()),
-          new WaitCommand(LEDConstants.k_waitTime),
-          new InstantCommand(() -> setLEDsOrange()),
-          new WaitCommand(LEDConstants.k_waitTime),
-          new InstantCommand(() -> setLEDsWhite()),
-          new WaitCommand(LEDConstants.k_waitTime),
-          new InstantCommand(() -> setLEDsPurple()));
-    }
+  public void blinkLEDsPurple() {
+    new SequentialCommandGroup(
+        new InstantCommand(() -> setLEDsPurple()),
+        new WaitCommand(LEDConstants.k_waitTime),
+        new InstantCommand(() -> setLEDsWhite()),
+        new WaitCommand(LEDConstants.k_waitTime),
+        new InstantCommand(() -> setLEDsPurple()),
+        new WaitCommand(LEDConstants.k_waitTime),
+        new InstantCommand(() -> setLEDsWhite()),
+        new WaitCommand(LEDConstants.k_waitTime),
+        new InstantCommand(() -> setLEDsPurple()),
+        new WaitCommand(LEDConstants.k_waitTime),
+        new InstantCommand(() -> setLEDsWhite()),
+        new WaitCommand(LEDConstants.k_waitTime),
+        new InstantCommand(() -> setLEDsPurple()));
   }
 
   // Toggle between Orange and Purple to signal for coopertition bonus

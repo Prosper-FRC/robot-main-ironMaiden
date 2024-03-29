@@ -35,6 +35,7 @@ import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkMax;
 import frc.robot.subsystems.intake.Intake;
 import frc.robot.subsystems.leds.LEDs;
+import frc.robot.subsystems.leds.Sensor;
 import frc.robot.subsystems.shooter.Shooter;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -54,7 +55,8 @@ public class RobotContainer {
   private static final CommandXboxController operator =
       new CommandXboxController(Constants.k_operatorID);
 
-  private static final LEDs leds = new LEDs();
+  public static final LEDs leds = new LEDs();
+  public static final Sensor sensor = new Sensor();
   public static final Arm arm = new Arm(operator.getHID(), leds);
 
   private static Intake intake;
@@ -128,6 +130,7 @@ public class RobotContainer {
     }
 
     autonomous = new Autonomous(intake, shooter, drive);
+    leds.ladyChaser();
 
     // Set up auto routines
     NamedCommands.registerCommand("Run Shoot", autonomous.SHOOT());
@@ -202,6 +205,7 @@ public class RobotContainer {
                   intake.zero();
                 }));*/
 
+    // Source Intake
     operator
         .povUp()
         .whileTrue(new InstantCommand(() -> shooter.setSpeedReverse()))
@@ -212,6 +216,7 @@ public class RobotContainer {
                   intake.zero();
                 }));
 
+    // Climb Down
     operator
         .a()
         .whileTrue(
@@ -220,15 +225,19 @@ public class RobotContainer {
                   arm.goToClimbDownPos();
                 }));
 
+    // Amp Shoot
     operator
         .b()
-        .whileTrue(ampButtonBinding())
+        .whileTrue(
+            new ParallelCommandGroup(
+                ampButtonBinding(), new InstantCommand(() -> sensor.detectOff())))
         .onFalse(
             new ParallelCommandGroup(
                 new InstantCommand(() -> arm.goToShootPos()),
                 new InstantCommand(() -> intake.zero()),
                 new InstantCommand(() -> shooter.zero())));
 
+    // Climb Up
     operator
         .y()
         .whileTrue(
@@ -237,9 +246,12 @@ public class RobotContainer {
                   arm.goToClimbUpPos();
                 }));
 
+    // Speaker Shoot
     operator
         .x()
-        .whileTrue(shootButtonBinding())
+        .whileTrue(
+            new ParallelCommandGroup(
+                shootButtonBinding(), new InstantCommand(() -> sensor.detectOff())))
         .onFalse(
             new ParallelCommandGroup(
                 new InstantCommand(() -> arm.goToShootPos()),
@@ -250,11 +262,11 @@ public class RobotContainer {
         DriveCommands.joystickDrive(
             drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> driver.getRightX()));
 
-    driver.leftBumper().onTrue(autonomous.SHOOT_MOBILITY_LOAD());
+    // driver.leftBumper().onTrue(autonomous.SHOOT_MOBILITY_LOAD());
 
     driver.rightBumper().onTrue(leds.toggleBlue());
 
-    driver.rightTrigger().onTrue(new InstantCommand(() -> arm.climbOff()));
+    // driver.rightTrigger().onTrue(new InstantCommand(() -> arm.climbOff()));
 
     driver.a().onTrue(new InstantCommand(() -> Drive.resetGyro()));
 
