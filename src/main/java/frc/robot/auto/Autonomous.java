@@ -107,6 +107,27 @@ public class Autonomous extends SubsystemBase {
             wait(6.0), runIntake(), wait(1.5), runRetract(), wait(0.1), zeroIntake()));
   }
 
+  /*
+  public Command SHOOT_MOBILITY_LOAD() {
+    return new ParallelCommandGroup(
+        new SequentialCommandGroup(
+            resetGyro(),
+            cancel(),
+            moveField(2.0, 0.0, 0.5),
+            cancelDrive(),
+            SHOOT(),
+            cancel(),
+            rotate(0.05, 0.585),
+            moveField(0.908, 1.782, 1.8),
+            moveField(-0.908, -1.782, 1.8),
+            rotate(-0.05, 0.585),
+            cancelDrive(),
+            SHOOT()),
+        new SequentialCommandGroup(
+            wait(6.0), runIntake(), wait(1.5), runRetract(), wait(0.1), zeroIntake()));
+  }
+   */
+
   // ---------------------------------------------------------------[Commands]--------------------------------------------------------
   public Command SHOOT() {
     return new SequentialCommandGroup(shootSpeaker(), wait(1.5), cancel());
