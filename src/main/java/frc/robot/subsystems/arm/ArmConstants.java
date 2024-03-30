@@ -43,6 +43,7 @@ public class ArmConstants {
   // public static final double k_climbDownSetpoint = 0.0;
   public static final double k_ampSetpoint = 0.18; // 0.18
   public static final double k_shootSetpoint = 0.0; // 0189998
+  public static final double k_speakerSetpoint = 0.23;
   public static final double k_tolerance = 0.1;
 
   public static final double k_armDeadband = 0.1;

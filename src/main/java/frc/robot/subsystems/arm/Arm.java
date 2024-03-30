@@ -79,6 +79,16 @@ public class Arm extends SubsystemBase {
     // armController.setGoal(ArmConstants.k_shootSetpoint);
     System.out.println("Going to climb down pos");
   }
+
+  public void goToSpeakerPos() {
+    armController.setConstraints(
+        new TrapezoidProfile.Constraints(
+            ArmConstants.k_maxVelocity, ArmConstants.k_maxAcceleration));
+    setpoint = ArmConstants.k_speakerSetpoint;
+    // armController.setGoal(ArmConstants.k_shootSetpoint);
+    System.out.println("Going to against the speaker pos");
+  }
+
   // Moves arm to amp position to shoot note
   double pidVal;
 
