@@ -81,6 +81,14 @@ public class RobotContainer {
   }
   ;
 
+  public Command speakerButtonBinding() {
+    return new SequentialCommandGroup(
+        new ParallelCommandGroup(new InstantCommand(() -> shooter.setSpeakerSpeed())),
+        new InstantCommand(() -> arm.goToSpeakerPos()),
+        new WaitCommand(2.0),
+        new InstantCommand(() -> intake.intake()));
+  }
+
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
@@ -173,7 +181,7 @@ public class RobotContainer {
 
     // 'a' button outtakes note
     operator
-        .rightBumper()
+        .leftTrigger()
         .whileTrue(new InstantCommand(() -> intake.outtake()))
         .onFalse(new InstantCommand(() -> intake.zero()));
 
@@ -217,6 +225,15 @@ public class RobotContainer {
     operator
         .x()
         .whileTrue(shootButtonBinding())
+        .onFalse(
+            new ParallelCommandGroup(
+                new InstantCommand(() -> arm.goToShootPos()),
+                new InstantCommand(() -> intake.zero()),
+                new InstantCommand(() -> shooter.zero())));
+
+    operator
+        .rightBumper()
+        .whileTrue(speakerButtonBinding())
         .onFalse(
             new ParallelCommandGroup(
                 new InstantCommand(() -> arm.goToShootPos()),

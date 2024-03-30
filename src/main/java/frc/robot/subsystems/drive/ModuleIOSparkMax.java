@@ -85,6 +85,9 @@ public class ModuleIOSparkMax implements ModuleIO {
     driveSparkMax.restoreFactoryDefaults();
     turnSparkMax.restoreFactoryDefaults();
 
+    driveSparkMax.clearFaults();
+    turnSparkMax.clearFaults();
+
     driveSparkMax.setCANTimeout(250);
     turnSparkMax.setCANTimeout(250);
 
@@ -111,8 +114,8 @@ public class ModuleIOSparkMax implements ModuleIO {
     driveSparkMax.setCANTimeout(0);
     turnSparkMax.setCANTimeout(0);
 
-    driveSparkMax.burnFlash();
-    turnSparkMax.burnFlash();
+    // driveSparkMax.burnFlash();
+    // turnSparkMax.burnFlash();
   }
 
   @Override
@@ -154,6 +157,22 @@ public class ModuleIOSparkMax implements ModuleIO {
   @Override
   public void setTurnBrakeMode(boolean enable) {
     turnSparkMax.setIdleMode(enable ? IdleMode.kBrake : IdleMode.kCoast);
+  }
+
+  public double getDriveCurrentSetpoint() {
+    return driveSparkMax.getAppliedOutput();
+  }
+
+  public double getTurnCurrentSetpoint() {
+    return turnSparkMax.getAppliedOutput();
+  }
+
+  public double getDriveCurrent() {
+    return driveSparkMax.get();
+  }
+
+  public double getTurnCurrent() {
+    return turnSparkMax.get();
   }
 
   public CANcoder getCanCoder() {
