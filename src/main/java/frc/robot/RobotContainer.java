@@ -144,7 +144,7 @@ public class RobotContainer {
     autoChooser.addOption("2P-Mobility-Left", autonomous.MOBILITY_2P_LEFT());
 
     // Configure the button bindings
-    configureButtonBindings();
+    configureButtonBindingsMillie();
   }
 
   /**
@@ -157,7 +157,115 @@ public class RobotContainer {
   // -------------------------------------------------------------------[Button
   // Bindings]-----------------------------------------------------------------------
 
-  private void configureButtonBindings() {
+  private void configureButtonBindingsMillie() {
+    // right bumper intakes note and retracts to move note away from shooter wheels
+    operator.leftBumper().whileTrue(smartFeed);
+
+    operator.leftBumper().onFalse(new InstantCommand(() -> intake.zero()));
+
+    // 'a' button outtakes note
+    operator
+        .leftTrigger()
+        .whileTrue(new InstantCommand(() -> intake.outtake()))
+        .onFalse(new InstantCommand(() -> intake.zero()));
+
+    // driver.y().onTrue(autonomous.SHOOT_MOBILITY());
+
+    operator
+        .povUp()
+        .whileTrue(new InstantCommand(() -> shooter.setSpeedReverse()))
+        .onFalse(
+            new InstantCommand(
+                () -> {
+                  shooter.zero();
+                  intake.zero();
+                }));
+
+    operator
+        .a()
+        .whileTrue(
+            new InstantCommand(
+                () -> {
+                  arm.goToClimbDownPos();
+                }));
+
+    operator
+        .b()
+        .whileTrue(ampButtonBinding())
+        .onFalse(
+            new ParallelCommandGroup(
+                new InstantCommand(() -> arm.goToShootPos()),
+                new InstantCommand(() -> intake.zero()),
+                new InstantCommand(() -> shooter.zero())));
+
+    operator
+        .rightBumper()
+        .whileTrue(new InstantCommand(() -> intake.outtake()))
+        .onFalse(
+            new ParallelCommandGroup(
+                new InstantCommand(() -> arm.goToShootPos()),
+                new InstantCommand(() -> intake.zero()),
+                new InstantCommand(() -> shooter.zero())));
+
+    operator
+        .y()
+        .whileTrue(
+            new InstantCommand(
+                () -> {
+                  arm.goToClimbUpPos();
+                }));
+
+    operator
+        .x()
+        .whileTrue(shootButtonBinding())
+        .onFalse(
+            new ParallelCommandGroup(
+                new InstantCommand(() -> arm.goToShootPos()),
+                new InstantCommand(() -> intake.zero()),
+                new InstantCommand(() -> shooter.zero())));
+
+    operator
+        .rightTrigger()
+        .whileTrue(speakerButtonBinding())
+        .onFalse(
+            new ParallelCommandGroup(
+                new InstantCommand(() -> arm.goToShootPos()),
+                new InstantCommand(() -> intake.zero()),
+                new InstantCommand(() -> shooter.zero())));
+
+    drive.setDefaultCommand(
+        DriveCommands.joystickDrive(
+            drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> driver.getRightX()));
+
+    // driver.leftBumper().onTrue(autonomous.SHOOT_MOBILITY_LOAD());
+
+    // driver.rightBumper().onTrue(leds.toggleBlue());
+
+    // driver.rightTrigger().onTrue(new InstantCommand(() -> arm.climbOff()));
+
+    driver.a().onTrue(new InstantCommand(() -> Drive.resetGyro()));
+
+    /*
+    controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));
+
+    controller.b()
+        .onTrue(
+            Commands.runOnce(
+                    () ->
+                        drive.setPose(
+                            new Pose2d(drive.getPose().getTranslation(), new Rotation2d())),
+                    drive)
+                .ignoringDisable(true));
+
+    controller.a()
+        .whileTrue(
+            Commands.startEnd(
+                () -> flywheel.runVelocity(flywheelSpeedInput.get()), flywheel::stop, flywheel));
+    */
+
+  }
+
+  private void configureButtonBindingsFatemeh() {
 
     // right bumper intakes note and retracts to move note away from shooter wheels
     operator.leftBumper().whileTrue(smartFeed);

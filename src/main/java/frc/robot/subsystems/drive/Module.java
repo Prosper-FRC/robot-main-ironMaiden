@@ -19,6 +19,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 import org.littletonrobotics.junction.Logger;
 
@@ -50,7 +51,7 @@ public class Module {
         driveFeedforward = new SimpleMotorFeedforward(0.1, 0.1, 0.05); // 0.13
         driveFeedback = new PIDController(0.035, 0.0, 0.0);
         // driveFeedback.setTolerance(1);
-        turnFeedback = new PIDController(6.0, 0.0, 0.15);
+        turnFeedback = new PIDController(6.4, 0.0, 0.0); // 0.15 for D
         turnFeedback.setTolerance(0.1);
         break;
       case SIM:
@@ -71,6 +72,13 @@ public class Module {
 
   public void periodic() {
     io.updateInputs(inputs);
+
+    // This smartdashboard logging was written by a member of ladytalons
+    SmartDashboard.putNumber("Actual Angle #" + Integer.toString(index), actualAngle());
+    SmartDashboard.putNumber("Actual Speed #" + Integer.toString(index), actualSpeed());
+    SmartDashboard.putNumber("Target Angle #" + Integer.toString(index), targetAngle());
+    SmartDashboard.putNumber("Target Speed #" + Integer.toString(index), targetSpeed());
+
     Logger.processInputs("Drive/Module" + Integer.toString(index), inputs);
 
     // On first cycle, reset relative turn encoder
@@ -102,6 +110,8 @@ public class Module {
       }
     }
   }
+
+  // Julio + Natalia foreverrrrrrrrr hehehehehehe
 
   /** Runs the module with the specified setpoint state. Returns the optimized state. */
   public SwerveModuleState runSetpoint(SwerveModuleState state) {
@@ -139,7 +149,7 @@ public class Module {
   /** Sets whether brake mode is enabled. */
   public void setBrakeMode(boolean enabled) {
     io.setDriveBrakeMode(enabled);
-    io.setTurnBrakeMode(enabled);
+    io.setTurnBrakeMode(false);
   }
 
   /** Returns the current turn angle of the module. */
@@ -149,6 +159,26 @@ public class Module {
     } else {
       return inputs.turnPosition.plus(turnRelativeOffset);
     }
+  }
+
+  public Double getSpeed() {
+    return inputs.driveAppliedVolts / 12.0;
+  }
+
+  public double targetSpeed() {
+    return (speedSetpoint == null) ? Double.POSITIVE_INFINITY : speedSetpoint;
+  }
+
+  public double targetAngle() {
+    return (angleSetpoint == null) ? Double.POSITIVE_INFINITY : angleSetpoint.getRadians();
+  }
+
+  public double actualAngle() {
+    return getAngle().getRadians();
+  }
+
+  public double actualSpeed() {
+    return getSpeed().doubleValue();
   }
 
   /** Returns the current drive position of the module in meters. */
