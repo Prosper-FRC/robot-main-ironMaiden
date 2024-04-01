@@ -14,7 +14,6 @@
 package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.auto.NamedCommands;
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -136,23 +135,13 @@ public class RobotContainer {
 
     autonomous = new Autonomous(intake, shooter, drive);
 
-    // Set up auto routines
-    NamedCommands.registerCommand("Run Shoot", autonomous.SHOOT());
-
     autoChooser = new LoggedDashboardChooser<>("Auto Choices", AutoBuilder.buildAutoChooser());
 
     // Set up autonomous pathplanner routines
-    autoChooser.addOption("Auto: SHOOT", autonomous.SHOOT());
-    // autoChooser.addOption("Auto: PL-MB", autonomous.PL_MB());
-    // autoChooser.addOption("Auto: PL-MB-1P", autonomous.PL_MB_1P(0));
-    // autoChooser.addOption("Auto: PL-MB-1P-L", autonomous.PL_MB_1P_L());
-    // autoChooser.addOption("Auto: PL-MB-2P", autonomous.PL_MB_2P());
-    // autoChooser.addOption("Auto: Auto PL-MB-1L", AutoBuilder.buildAuto("PL-M-1L"));
-    autoChooser.addOption("Auto: Test", autonomous.test());
     autoChooser.addOption("Mobility", autonomous.MOBILITY());
     autoChooser.addOption("Mobility-Shoot", autonomous.SHOOT_MOBILITY());
-    autoChooser.addOption("2P-Mobility", autonomous.SHOOT_MOBILITY_LOAD());
-    autoChooser.addOption("2-Mobility", autonomous.SHOOT_MOBILITY_2P());
+    autoChooser.addOption("2P-Mobility-Right", autonomous.MOBILITY_2P_RIGHT());
+    autoChooser.addOption("2P-Mobility-Left", autonomous.MOBILITY_2P_LEFT());
 
     // Configure the button bindings
     configureButtonBindings();
@@ -186,7 +175,7 @@ public class RobotContainer {
         .whileTrue(new InstantCommand(() -> intake.outtake()))
         .onFalse(new InstantCommand(() -> intake.zero()));
 
-    driver.y().onTrue(autonomous.SHOOT_MOBILITY());
+    // driver.y().onTrue(autonomous.SHOOT_MOBILITY());
 
     /*// Left bumper shoots Speaker, now shootSpeaker also includes moving intake also.
     operator
@@ -267,11 +256,11 @@ public class RobotContainer {
         DriveCommands.joystickDrive(
             drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> driver.getRightX()));
 
-    driver.leftBumper().onTrue(autonomous.SHOOT_MOBILITY_LOAD());
+    // driver.leftBumper().onTrue(autonomous.SHOOT_MOBILITY_LOAD());
 
     driver.rightBumper().onTrue(leds.toggleBlue());
 
-    driver.rightTrigger().onTrue(new InstantCommand(() -> arm.climbOff()));
+    // driver.rightTrigger().onTrue(new InstantCommand(() -> arm.climbOff()));
 
     driver.a().onTrue(new InstantCommand(() -> Drive.resetGyro()));
 

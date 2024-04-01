@@ -89,7 +89,7 @@ public class Autonomous extends SubsystemBase {
         cancelDrive());
   }
 
-  public Command SHOOT_MOBILITY_LOAD() {
+  public Command MOBILITY_2P_RIGHT() {
     return new ParallelCommandGroup(
         new SequentialCommandGroup(
             cancel(),
@@ -98,8 +98,8 @@ public class Autonomous extends SubsystemBase {
             SHOOT(),
             cancel(),
             rotate(-0.05, 0.585),
-            moveField(0.908, 1.782, 1.8),
-            moveField(-0.908, -1.782, 1.8),
+            moveField(0.908, 1.782, 1.9),
+            moveField(-0.908, -1.782, 1.9),
             rotate(0.05, 0.585),
             cancelDrive(),
             SHOOT()),
@@ -107,7 +107,7 @@ public class Autonomous extends SubsystemBase {
             wait(6.0), runIntake(), wait(1.5), runRetract(), wait(0.1), zeroIntake()));
   }
 
-  public Command SHOOT_MOBILITY_2P() {
+  public Command MOBILITY_2P_LEFT() {
     return new ParallelCommandGroup(
         new SequentialCommandGroup(
             resetGyro(),
@@ -117,8 +117,8 @@ public class Autonomous extends SubsystemBase {
             SHOOT(),
             cancel(),
             rotate(0.05, 0.585),
-            moveField(0.908, -1.782, 1.8),
-            moveField(-0.908, 1.782, 1.8),
+            moveField(-0.908, -1.782, 1.9),
+            moveField(0.908, 1.782, 1.9),
             rotate(-0.05, 0.585),
             cancelDrive(),
             SHOOT()),
