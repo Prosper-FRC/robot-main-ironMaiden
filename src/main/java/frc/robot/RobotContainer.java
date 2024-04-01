@@ -79,11 +79,13 @@ public class RobotContainer {
         new InstantCommand(() -> intake.intake()));
   }
 
+  
+
   public Command speakerButtonBinding() {
     return new SequentialCommandGroup(
         new ParallelCommandGroup(new InstantCommand(() -> shooter.setSpeakerSpeed())),
         new InstantCommand(() -> arm.goToSpeakerPos()),
-        new WaitCommand(2),
+        new WaitCommand(2.0),
         new InstantCommand(() -> intake.intake()));
   }
 
@@ -177,28 +179,6 @@ public class RobotContainer {
 
     // driver.y().onTrue(autonomous.SHOOT_MOBILITY());
 
-    /*// Left bumper shoots Speaker, now shootSpeaker also includes moving intake also.
-    operator
-        .leftTrigger()
-        .whileTrue(shooter.shootSpeaker())
-        .onFalse(
-            new InstantCommand(
-                () -> {
-                  shooter.zero();
-                  intake.zero();
-                }));
-
-    // Left joystick CLICK shoots amp, also moves intake using one button
-    operator
-        .rightTrigger()
-        .whileTrue(shooter.shootAmp())
-        .onFalse(
-            new InstantCommand(
-                () -> {
-                  shooter.zero();
-                  intake.zero();
-                }));*/
-
     operator
         .povUp()
         .whileTrue(new InstantCommand(() -> shooter.setSpeedReverse()))
@@ -252,13 +232,22 @@ public class RobotContainer {
                 new InstantCommand(() -> intake.zero()),
                 new InstantCommand(() -> shooter.zero())));
 
+    operator
+        .rightBumper()
+        .whileTrue(speakerButtonBinding())
+        .onFalse(
+            new ParallelCommandGroup(
+                new InstantCommand(() -> arm.goToShootPos()),
+                new InstantCommand(() -> intake.zero()),
+                new InstantCommand(() -> shooter.zero())));
+
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> driver.getRightX()));
 
     // driver.leftBumper().onTrue(autonomous.SHOOT_MOBILITY_LOAD());
 
-    driver.rightBumper().onTrue(leds.toggleBlue());
+    // driver.rightBumper().onTrue(leds.toggleBlue());
 
     // driver.rightTrigger().onTrue(new InstantCommand(() -> arm.climbOff()));
 

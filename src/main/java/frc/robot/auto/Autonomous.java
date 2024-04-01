@@ -4,8 +4,6 @@
 
 package frc.robot.auto;
 
-import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -35,44 +33,6 @@ public class Autonomous extends SubsystemBase {
 
   // ---------------------------------------------------------------[Auton Path
   // Configuration]--------------------------------------------------------
-
-  public Command test() {
-    return AutoBuilder.followPath(PathPlannerPath.fromPathFile("Test Path"));
-  }
-  // Pre-Loaded Shot
-  public Command PL() {
-    return new SequentialCommandGroup(
-        AutoBuilder.followPath(PathPlannerPath.fromPathFile("To Shoot1")), SHOOT());
-  }
-  // PreLoad-Mobility
-  public Command PL_MB() {
-    return new SequentialCommandGroup(
-        PL(), AutoBuilder.followPath(PathPlannerPath.fromPathFile("Shoot1-Note1")));
-  }
-
-  // PreLoad-Mobility-Note1
-  public Command PL_MB_1P(int side) {
-    switch (side) {
-      case 0:
-        return new SequentialCommandGroup(
-            PL_MB(), AutoBuilder.followPath(PathPlannerPath.fromPathFile("Note1-Shoot1")), SHOOT());
-      default:
-        return new SequentialCommandGroup(
-            PL_MB(), AutoBuilder.followPath(PathPlannerPath.fromPathFile("Note1-Shoot1")), SHOOT());
-    }
-  }
-
-  public Command PL_MB_1P_L() {
-    return new SequentialCommandGroup(
-        PL_MB_1P(0), AutoBuilder.followPath(PathPlannerPath.fromPathFile("Shoot1-Note2")));
-  }
-
-  public Command PL_MB_2P() {
-    return new SequentialCommandGroup(
-        PL_MB_1P_L(),
-        AutoBuilder.followPath(PathPlannerPath.fromPathFile("Note2-Shoot2")),
-        SHOOT());
-  }
 
   public Command MOBILITY() {
     return new SequentialCommandGroup(cancel(), moveField(2.0, 0.0, 0.5));
