@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import frc.robot.auto.Autonomous;
 // import frc.robot.auto.DriveDistance;
 import frc.robot.commands.DriveCommands;
+import frc.robot.commands.SmartFeed;
 import frc.robot.subsystems.arm.Arm;
 import frc.robot.subsystems.drive.Drive;
 import frc.robot.subsystems.drive.GyroIO;
@@ -33,7 +34,6 @@ import frc.robot.subsystems.drive.ModuleIO;
 import frc.robot.subsystems.drive.ModuleIOSim;
 import frc.robot.subsystems.drive.ModuleIOSparkMax;
 import frc.robot.subsystems.intake.Intake;
-import frc.robot.subsystems.leds.LEDs;
 import frc.robot.subsystems.shooter.Shooter;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 
@@ -46,6 +46,7 @@ import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 public class RobotContainer {
   // Subsystems
   private final Drive drive;
+  private SmartFeed smartFeed;
 
   // Controller
   private static final CommandXboxController driver =
@@ -53,8 +54,7 @@ public class RobotContainer {
   private static final CommandXboxController operator =
       new CommandXboxController(Constants.k_operatorID);
 
-  private static final LEDs leds = new LEDs();
-  public static final Arm arm = new Arm(operator.getHID(), leds);
+  public static final Arm arm = new Arm(operator.getHID());
 
   private static Intake intake;
   private static Shooter shooter;
@@ -79,8 +79,6 @@ public class RobotContainer {
         new InstantCommand(() -> intake.intake()));
   }
 
-  
-
   public Command speakerButtonBinding() {
     return new SequentialCommandGroup(
         new ParallelCommandGroup(new InstantCommand(() -> shooter.setSpeakerSpeed())),
@@ -95,7 +93,7 @@ public class RobotContainer {
     intake = new Intake();
     shooter = new Shooter(intake);
 
-    leds.ladyChaser();
+    smartFeed = new SmartFeed(intake);
 
     // Manual:
     // arm.setDefaultCommand(new ArmCommand(() -> operator.getRightY(), arm));
@@ -162,14 +160,9 @@ public class RobotContainer {
   private void configureButtonBindings() {
 
     // right bumper intakes note and retracts to move note away from shooter wheels
-    operator
-        .leftBumper()
-        .whileTrue(
-            new InstantCommand(
-                () -> {
-                  intake.intake();
-                }))
-        .onFalse(intake.retract());
+    operator.leftBumper().whileTrue(smartFeed);
+
+    operator.leftBumper().onFalse(new InstantCommand(() -> intake.zero()));
 
     // 'a' button outtakes note
     operator

@@ -8,11 +8,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.CANSparkMax;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 
 public class Intake extends SubsystemBase {
   /** Creates a new Intake. */
@@ -38,12 +34,12 @@ public class Intake extends SubsystemBase {
   }
 
   // Command to pull back note away from shooter wheels when intake button is released
-  public Command retract() {
-    return new SequentialCommandGroup(
-        new InstantCommand(() -> outtake()),
-        new WaitCommand(IntakeConstants.k_waitTime),
-        new InstantCommand(() -> zero()));
-  }
+  // public Command retract() {
+  //   return new SequentialCommandGroup(
+  //       new InstantCommand(() -> outtake()),
+  //       new WaitCommand(IntakeConstants.k_waitTime),
+  //       new InstantCommand(() -> zero()));
+  // }
 
   @Override
   public void periodic() {
