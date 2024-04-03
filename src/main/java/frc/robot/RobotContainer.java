@@ -142,9 +142,12 @@ public class RobotContainer {
     autoChooser.addOption("Mobility-Shoot", autonomous.SHOOT_MOBILITY());
     autoChooser.addOption("2P-Mobility-Right", autonomous.MOBILITY_2P_RIGHT());
     autoChooser.addOption("2P-Mobility-Left", autonomous.MOBILITY_2P_LEFT());
+    autoChooser.addOption("1P-Mobility-Right-Sweep", autonomous.MOBILITY_2P_RIGHT_CENTER());
+
+    autoChooser.addOption("Test Path", autonomous.testPath());
 
     // Configure the button bindings
-    configureButtonBindingsMillie();
+    configureButtonBindingsFatemeh();
   }
 
   /**
@@ -235,15 +238,22 @@ public class RobotContainer {
 
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
-            drive, () -> -driver.getLeftY(), () -> -driver.getLeftX(), () -> driver.getRightX()));
+            drive, () -> driver.getLeftY(), () -> driver.getLeftX(), () -> -driver.getRightX()));
 
-    // driver.leftBumper().onTrue(autonomous.SHOOT_MOBILITY_LOAD());
+    driver
+        .leftBumper()
+        .whileTrue(DriveCommands.joystickDrive(drive, () -> 0.0, () -> 0.0, () -> 0.2));
 
-    // driver.rightBumper().onTrue(leds.toggleBlue());
+    driver
+        .rightBumper()
+        .whileTrue(DriveCommands.joystickDrive(drive, () -> 0.0, () -> 0.0, () -> -0.2));
 
     // driver.rightTrigger().onTrue(new InstantCommand(() -> arm.climbOff()));
 
     driver.a().onTrue(new InstantCommand(() -> Drive.resetGyro()));
+
+    // driver.rightTrigger().onTrue(AutoBuilder.followPath(PathPlannerPath.fromPathFile("Test
+    // Path")));
 
     /*
     controller.x().onTrue(Commands.runOnce(drive::stopWithX, drive));

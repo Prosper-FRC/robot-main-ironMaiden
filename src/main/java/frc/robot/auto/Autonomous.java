@@ -4,6 +4,8 @@
 
 package frc.robot.auto;
 
+import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.path.PathPlannerPath;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -35,32 +37,33 @@ public class Autonomous extends SubsystemBase {
   // Configuration]--------------------------------------------------------
 
   public Command MOBILITY() {
-    return new SequentialCommandGroup(cancel(), moveField(2.0, 0.0, 0.5));
+    return new SequentialCommandGroup(cancel(), translateField(2.0, 0.0, 0.5));
   }
 
   public Command SHOOT_MOBILITY() {
     return new SequentialCommandGroup(
         cancel(),
-        moveField(2.0, 0.0, 0.5),
+        translateField(2.0, 0.0, 0.5),
         cancelDrive(),
         SHOOT(),
         cancel(),
-        moveField(2.0, 0.0, 0.5),
+        translateField(2.0, 0.0, 0.5),
         cancelDrive());
   }
 
   public Command MOBILITY_2P_RIGHT() {
     return new ParallelCommandGroup(
         new SequentialCommandGroup(
+            resetGyro(),
             cancel(),
-            moveField(2.0, 0.0, 0.5),
+            translateField(-2.0, 0.0, 0.5),
             cancelDrive(),
             SHOOT(),
             cancel(),
-            rotate(-0.05, 0.585),
-            moveField(0.908, 1.782, 1.9),
-            moveField(-0.908, -1.782, 1.9),
-            rotate(0.05, 0.585),
+            rotate(0.05, 0.55),
+            translateField(-0.908, -1.782, 1.9),
+            translateField(0.908, 1.782, 1.9),
+            rotate(-0.05, 0.55),
             cancelDrive(),
             SHOOT()),
         new SequentialCommandGroup(
@@ -72,18 +75,30 @@ public class Autonomous extends SubsystemBase {
         new SequentialCommandGroup(
             resetGyro(),
             cancel(),
-            moveField(2.0, 0.0, 0.5),
+            translateField(-2.0, 0.0, 0.5),
             cancelDrive(),
             SHOOT(),
             cancel(),
-            rotate(0.05, 0.585),
-            moveField(-0.908, -1.782, 1.9),
-            moveField(0.908, 1.782, 1.9),
             rotate(-0.05, 0.585),
+            translateField(-0.908, -1.782, 1.9),
+            translateField(0.908, 1.782, 1.9),
+            rotate(0.05, 0.585),
             cancelDrive(),
             SHOOT()),
         new SequentialCommandGroup(
             wait(6.0), runIntake(), wait(1.5), runRetract(), wait(0.1), zeroIntake()));
+  }
+
+  public Command MOBILITY_2P_RIGHT_CENTER() {
+    return new SequentialCommandGroup(
+        resetGyro(),
+        cancel(),
+        translateField(-2.0, 0.0, 0.5),
+        cancelDrive(),
+        SHOOT(),
+        cancel(),
+        rotate(0.05, 0.585),
+        translateField(-0.908, -1.782, 5));
   }
 
   // ---------------------------------------------------------------[Commands]--------------------------------------------------------
@@ -111,9 +126,15 @@ public class Autonomous extends SubsystemBase {
                     0.0, Units.feetToMeters(5.0), 0.0, drive.gyroValue())));
   }
 
-  public Command moveField(double x, double y, double sec) {
+  public Command translateField(double x, double y, double sec) {
     return DriveCommands.joystickDrive(
             drive, () -> Units.feetToMeters(x), () -> Units.feetToMeters(y), () -> 0.0)
+        .withTimeout(sec);
+  }
+
+  public Command moveField(double x, double y, double rot, double sec) {
+    return DriveCommands.joystickDrive(
+            drive, () -> Units.feetToMeters(x), () -> Units.feetToMeters(y), () -> rot)
         .withTimeout(sec);
   }
 
@@ -130,6 +151,12 @@ public class Autonomous extends SubsystemBase {
         .withTimeout(sec);
   }
 
+  public Command testPath() {
+    return AutoBuilder.followPath(PathPlannerPath.fromPathFile("Test Path"));
+  }
+
+  // driver.rightTrigger().onTrue(AutoBuilder.followPath(PathPlannerPath.fromPathFile("Test
+  // Path")));
   public Command shootSpeaker() {
     return shooter.shootSpeaker();
   }

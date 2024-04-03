@@ -12,9 +12,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.SmartFeed;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
@@ -122,21 +119,9 @@ public class Robot extends LoggedRobot {
     }
   }
 
-  public Command blinkGreenBlue() {
-    return new SequentialCommandGroup(
-        new InstantCommand(() -> green()),
-        new WaitCommand(0.1),
-        new InstantCommand(() -> blue()),
-        new WaitCommand(0.1),
-        new InstantCommand(() -> green()),
-        new WaitCommand(0.1),
-        new InstantCommand(() -> blue()),
-        new WaitCommand(0.1),
-        new InstantCommand(() -> green()),
-        new WaitCommand(0.1),
-        new InstantCommand(() -> blue()),
-        new WaitCommand(0.1));
-  }
+  /* public Command blinkGreenBlue() {
+
+  }*/
 
   public void scanner() {
     int bufferLength = m_ledBuffer.getLength();

@@ -51,7 +51,7 @@ public class Module {
         driveFeedforward = new SimpleMotorFeedforward(0.1, 0.1, 0.05); // 0.13
         driveFeedback = new PIDController(0.035, 0.0, 0.0);
         // driveFeedback.setTolerance(1);
-        turnFeedback = new PIDController(6.4, 0.0, 0.0); // 0.15 for D
+        turnFeedback = new PIDController(8, 0.0, 0.0); // 0.15 for D
         turnFeedback.setTolerance(0.1);
         break;
       case SIM:

@@ -55,28 +55,25 @@ public class ModuleIOSparkMax implements ModuleIO {
         driveSparkMax = new CANSparkMax(11, MotorType.kBrushless);
         turnSparkMax = new CANSparkMax(21, MotorType.kBrushless);
         turnAbsoluteEncoder = new CANcoder(31);
-        absoluteEncoderOffset =
-            Rotation2d.fromRotations(0.046143 + 0.5); // 3.6432044694, 0.062256 + 0.5 - .005
+        absoluteEncoderOffset = Rotation2d.fromRotations(0.042969); // 0.046143 + 0.5
         break;
       case 1:
         driveSparkMax = new CANSparkMax(12, MotorType.kBrushless);
         turnSparkMax = new CANSparkMax(22, MotorType.kBrushless);
         turnAbsoluteEncoder = new CANcoder(32);
-        absoluteEncoderOffset =
-            Rotation2d.fromRotations(-0.469482); // 0.17793980789, -0.472412 + 0.5
+        absoluteEncoderOffset = Rotation2d.fromRotations(0.023193); // -0.469482
         break;
       case 2:
         driveSparkMax = new CANSparkMax(13, MotorType.kBrushless);
         turnSparkMax = new CANSparkMax(23, MotorType.kBrushless);
         turnAbsoluteEncoder = new CANcoder(33);
-        absoluteEncoderOffset = Rotation2d.fromRotations(0.415039); // 5.72021190366, 0.407471 + 0.5
+        absoluteEncoderOffset = Rotation2d.fromRotations(-0.081787); // 0.415039
         break;
       case 3:
         driveSparkMax = new CANSparkMax(14, MotorType.kBrushless);
         turnSparkMax = new CANSparkMax(24, MotorType.kBrushless);
         turnAbsoluteEncoder = new CANcoder(34);
-        absoluteEncoderOffset =
-            Rotation2d.fromRotations(-0.237549 + 0.5); // 4.92100958214, 0.259277 + 0.5 + 0.005
+        absoluteEncoderOffset = Rotation2d.fromRotations(-0.239990); // -0.237549 + 0.5
         break;
       default:
         throw new RuntimeException("Invalid module index");
