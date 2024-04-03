@@ -32,7 +32,7 @@ public class Arm extends SubsystemBase {
   private boolean isClimb = false;
   private boolean isAmp = false;
 
-  public Arm(XboxController controller, LEDs leds) {
+  public Arm(XboxController controller) {
 
     this.leds = leds;
 
@@ -69,15 +69,6 @@ public class Arm extends SubsystemBase {
         new TrapezoidProfile.Constraints(
             ArmConstants.k_maxVelocity, ArmConstants.k_maxAcceleration));
     setpoint = ArmConstants.k_shootSetpoint;
-    // armController.setGoal(ArmConstants.k_shootSetpoint);
-    System.out.println("Going to shoot pos");
-  }
-
-  public void goToSpeakerPos() {
-    armController.setConstraints(
-        new TrapezoidProfile.Constraints(
-            ArmConstants.k_maxVelocity, ArmConstants.k_maxAcceleration));
-    setpoint = ArmConstants.k_speakerSetpoint;
     // armController.setGoal(ArmConstants.k_shootSetpoint);
     System.out.println("Going to shoot pos");
   }

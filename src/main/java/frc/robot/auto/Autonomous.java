@@ -86,6 +86,18 @@ public class Autonomous extends SubsystemBase {
             wait(6.0), runIntake(), wait(1.5), runRetract(), wait(0.1), zeroIntake()));
   }
 
+  public Command MOBILITY_2P_RIGHT_CENTER() {
+    return new SequentialCommandGroup(
+        resetGyro(),
+        cancel(),
+        translateField(-2.0, 0.0, 0.5),
+        cancelDrive(),
+        SHOOT(),
+        cancel(),
+        rotate(0.05, 0.585),
+        translateField(-0.908, -1.782, 5));
+  }
+
   // ---------------------------------------------------------------[Commands]--------------------------------------------------------
   public Command SHOOT() {
     return new SequentialCommandGroup(shootSpeaker(), wait(1.5), cancel());
@@ -127,6 +139,12 @@ public class Autonomous extends SubsystemBase {
                     * (Units.feetToMeters(17.1)
                         / (Math.hypot(
                             Units.inchesToMeters(25.0) / 2.0, Units.inchesToMeters(25.0) / 2.0))))
+        .withTimeout(sec);
+  }
+
+  public Command translateField(double x, double y, double sec) {
+    return DriveCommands.joystickDrive(
+            drive, () -> Units.feetToMeters(x), () -> Units.feetToMeters(y), () -> 0.0)
         .withTimeout(sec);
   }
 
