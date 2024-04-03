@@ -79,8 +79,6 @@ public class RobotContainer {
         new InstantCommand(() -> intake.intake()));
   }
 
-  
-
   public Command speakerButtonBinding() {
     return new SequentialCommandGroup(
         new ParallelCommandGroup(new InstantCommand(() -> shooter.setSpeakerSpeed())),
