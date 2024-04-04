@@ -11,7 +11,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.commands.SmartFeed;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -148,11 +147,11 @@ public class Robot extends LoggedRobot {
     // and running subsystem periodic() methods.  This must be called from the robot's periodic
     // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
-    if (!SmartFeed.IndexerSensorHasNote()) {
-      blinking();
-    } else {
-      scanner();
-    }
+    // if (!SmartFeed.IndexerSensorHasNote()) {
+    //   blinking();
+    // } else {
+    //   scanner();
+    // }
     m_led.setData(m_ledBuffer);
   }
   /** This function is called once each time the robot enters Disabled mode. */

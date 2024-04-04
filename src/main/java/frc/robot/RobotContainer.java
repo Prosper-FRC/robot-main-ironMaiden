@@ -233,7 +233,8 @@ public class RobotContainer {
 
   private void configureButtonBindingsFatemeh() {
     // right bumper intakes note and retracts to move note away from shooter wheels
-    operator.leftBumper().whileTrue(smartFeed);
+    operator.leftBumper().whileTrue(new InstantCommand(() -> intake.intake()
+    ));
     operator.leftBumper().onFalse(new InstantCommand(() -> intake.zero()));
 
     // Right Trigger revs shooter wheels
