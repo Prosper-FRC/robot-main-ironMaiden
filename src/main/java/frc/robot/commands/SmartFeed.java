@@ -29,9 +29,13 @@ public class SmartFeed extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    if (!indexerSensor.get()) {
-      indexerIntake.zero();
-    } else {
+    // if (!indexerSensor.get()) {
+    //   indexerIntake.zero();
+    // } else {
+    //   indexerIntake.intake();
+    // }
+
+    if (indexerSensor.get()) {
       indexerIntake.intake();
     }
   }

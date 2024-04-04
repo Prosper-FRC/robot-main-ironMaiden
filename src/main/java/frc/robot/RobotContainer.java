@@ -50,7 +50,7 @@ public class RobotContainer {
   private static final CommandXboxController operator =
       new CommandXboxController(Constants.k_operatorID);
   public static final Arm arm = new Arm(operator.getHID());
-  private static Intake intake;
+  public static Intake intake;
   private static Shooter shooter;
   private static Autonomous autonomous;
   // Dashboard inputs
