@@ -1,26 +1,23 @@
-// Copyright 2021-2024 FRC 6328
-// http://github.com/Mechanical-Advantage
-//
-// This program is free software; you can redistribute it and/or
-// modify it under the terms of the GNU General Public License
-// version 3 as published by the Free Software Foundation or
-// available in the root directory of this project.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-// GNU General Public License for more details.
-
+// Copyright (c) FIRST and other WPILib contributors.
+// Open Source Software; you can modify and/or share it under the terms of
+// the WPILib BSD license file in the root directory of this project.
 package frc.robot;
 
+import edu.wpi.first.math.MathUtil;
+import edu.wpi.first.wpilibj.AddressableLED;
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
+import edu.wpi.first.wpilibj.DataLogManager;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-// import org.littletonrobotics.junction.LogFileUtil;
+import frc.robot.commands.SmartFeed;
+import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
-// import org.littletonrobotics.junction.networktables.NT4Publisher;
-// import org.littletonrobotics.junction.wpilog.WPILOGReader;
-// import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+import org.littletonrobotics.junction.networktables.NT4Publisher;
+import org.littletonrobotics.junction.wpilog.WPILOGReader;
+import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -29,135 +26,178 @@ import org.littletonrobotics.junction.Logger;
  * project.
  */
 public class Robot extends LoggedRobot {
-  private Command autonomousCommand;
-  private RobotContainer robotContainer;
-
+  private Command m_autonomousCommand;
+  private RobotContainer m_robotContainer;
+  private static AddressableLED m_led;
+  private static AddressableLEDBuffer m_ledBuffer;
+  private double lastChange;
+  private boolean on = true;
+  private Color m_EyeColor = Color.kGreen;
+  private Color m_BackgroundColor = Color.kPurple;
+  private int m_Length;
+  private int m_eyePosition = 0;
+  private int m_scanDirection = 1;
   /**
    * This function is run when the robot is first started up and should be used for any
    * initialization code.
    */
   @Override
   public void robotInit() {
-    /*
-    // Record metadata
-    Logger.recordMetadata("ProjectName", BuildConstants.MAVEN_NAME);
-    Logger.recordMetadata("BuildDate", BuildConstants.BUILD_DATE);
-    Logger.recordMetadata("GitSHA", BuildConstants.GIT_SHA);
-    Logger.recordMetadata("GitDate", BuildConstants.GIT_DATE);
-    Logger.recordMetadata("GitBranch", BuildConstants.GIT_BRANCH);
-    switch (BuildConstants.DIRTY) {
-      case 0:
-        Logger.recordMetadata("GitDirty", "All changes committed");
-        break;
-      case 1:
-        Logger.recordMetadata("GitDirty", "Uncomitted changes");
-        break;
-      default:
-        Logger.recordMetadata("GitDirty", "Unknown");
-        break;
-    }
-
-    // Set up data receivers & replay source
     switch (Constants.currentMode) {
       case REAL:
-        // Running on a real robot, log to a USB stick ("/U/logs")
         Logger.addDataReceiver(new WPILOGWriter());
         Logger.addDataReceiver(new NT4Publisher());
         break;
-
       case SIM:
-        // Running a physics simulator, log to NT
         Logger.addDataReceiver(new NT4Publisher());
         break;
-
       case REPLAY:
-        // Replaying a log, set up replay source
-        setUseTiming(false); // Run as fast as possible
+        setUseTiming(false);
         String logPath = LogFileUtil.findReplayLog();
         Logger.setReplaySource(new WPILOGReader(logPath));
         Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim")));
         break;
     }
-
-    */
-    // See http://bit.ly/3YIzFZ6 for more information on timestamps in AdvantageKit.
-    // Logger.disableDeterministicTimestamps()
-
-    // Start AdvantageKit logger
     Logger.start();
-
-    // Instantiate our RobotContainer. This will perform all our button bindings,
-    // and put our autonomous chooser on the dashboard.
-    robotContainer = new RobotContainer();
+    // Instantiate our RobotContainer.  This will perform all our button bindings, and put our
+    // autonomous chooser on the dashboard.
+    m_robotContainer = new RobotContainer();
+    DataLogManager.start();
+    // PWM port 0
+    // Must be a PWM header, not MXP or DIO
+    m_led = new AddressableLED(0);
+    // Reuse buffer
+    // Default to a length of 60, start empty output
+    // Length is expensive to set, so only set it once, then just update data
+    m_ledBuffer = new AddressableLEDBuffer(30);
+    m_led.setLength(m_ledBuffer.getLength());
+    // Set the data
+    m_led.setData(m_ledBuffer);
+    m_led.start();
+    m_led.setData(m_ledBuffer);
   }
 
-  /** This function is called periodically during all modes. */
+  public void green() {
+    for (var i = 0; i < m_ledBuffer.getLength(); i++) {
+      // Sets the specified LED to the RGB values for red
+      m_ledBuffer.setRGB(i, 0, 255, 0);
+    }
+  }
+
+  public void blue() {
+    for (var i = 0; i < m_ledBuffer.getLength(); i++) {
+      // Sets the specified LED to the RGB values for red
+      m_ledBuffer.setRGB(i, 0, 0, 255);
+    }
+  }
+
+  public void purple() {
+    for (var i = 0; i < m_ledBuffer.getLength(); i++) {
+      // Sets the specified LED to the RGB values for red
+      m_ledBuffer.setRGB(i, 255, 0, 255);
+    }
+  }
+
+  public void blinking() {
+    double timestamp = Timer.getFPGATimestamp();
+    if (timestamp - lastChange > 0.1) {
+      on = !on;
+      lastChange = timestamp;
+    }
+    if (on) {
+      green();
+    } else {
+      purple();
+    }
+  }
+  /* public Command blinkGreenBlue() {
+  }*/
+  public void scanner() {
+    int bufferLength = m_ledBuffer.getLength();
+    double intensity;
+    double red;
+    double green;
+    double blue;
+    double distanceFromEye;
+    for (int index = 0; index < bufferLength; index++) {
+      distanceFromEye = MathUtil.clamp(Math.abs(m_eyePosition - index), 0, 2);
+      intensity = 1 - distanceFromEye / 2;
+      red = MathUtil.interpolate(m_BackgroundColor.red, m_EyeColor.red, intensity);
+      green = MathUtil.interpolate(m_BackgroundColor.green, m_EyeColor.green, intensity);
+      blue = MathUtil.interpolate(m_BackgroundColor.blue, m_EyeColor.blue, intensity);
+      m_ledBuffer.setLED(index, new Color(red, green, blue));
+    }
+    if (m_eyePosition == 0) {
+      m_scanDirection = 1;
+    } else if (m_eyePosition == bufferLength - 1) {
+      m_scanDirection = -1;
+    }
+    m_eyePosition += m_scanDirection;
+  }
+  /**
+   * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
+   * that you want ran during disabled, autonomous, teleoperated and test.
+   *
+   * <p>This runs after the mode specific periodic functions, but before LiveWindow and
+   * SmartDashboard integrated updating.
+   */
   @Override
   public void robotPeriodic() {
-    // Runs the Scheduler. This is responsible for polling buttons, adding
-    // newly-scheduled commands, running already-scheduled commands, removing
-    // finished or interrupted commands, and running subsystem periodic() methods.
-    // This must be called from the robot's periodic block in order for anything in
-    // the Command-based framework to work.
+    // Runs the Scheduler.  This is responsible for polling buttons, adding newly-scheduled
+    // commands, running already-scheduled commands, removing finished or interrupted commands,
+    // and running subsystem periodic() methods.  This must be called from the robot's periodic
+    // block in order for anything in the Command-based framework to work.
     CommandScheduler.getInstance().run();
+    if (!SmartFeed.IndexerSensorHasNote()) {
+      blinking();
+    } else {
+      scanner();
+    }
+    m_led.setData(m_ledBuffer);
   }
-
-  /** This function is called once when the robot is disabled. */
+  /** This function is called once each time the robot enters Disabled mode. */
   @Override
   public void disabledInit() {}
 
-  /** This function is called periodically when disabled. */
   @Override
   public void disabledPeriodic() {}
-
   /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    autonomousCommand = robotContainer.getAutonomousCommand();
-
-    // schedule the autonomous command (example)
+    Command autonomousCommand = m_robotContainer.getAutonomousCommand();
     if (autonomousCommand != null) {
       autonomousCommand.schedule();
     }
   }
-
   /** This function is called periodically during autonomous. */
   @Override
-  public void autonomousPeriodic() {
-    // RobotContainer.arm.setSpeed(0);
-  }
+  public void autonomousPeriodic() {}
 
-  /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
     // This makes sure that the autonomous stops running when
     // teleop starts running. If you want the autonomous to
     // continue until interrupted by another command, remove
     // this line or comment it out.
-    if (autonomousCommand != null) {
-      autonomousCommand.cancel();
+    if (m_autonomousCommand != null) {
+      m_autonomousCommand.cancel();
     }
   }
-
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {}
 
-  /** This function is called once when test mode is enabled. */
   @Override
   public void testInit() {
     // Cancels all running commands at the start of test mode.
     CommandScheduler.getInstance().cancelAll();
   }
-
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {}
-
   /** This function is called once when the robot is first started up. */
   @Override
   public void simulationInit() {}
-
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {}
