@@ -40,6 +40,7 @@ public class Autonomous extends SubsystemBase {
 
   public Command SHOOT_MOBILITY() {
     return new SequentialCommandGroup(
+        resetGyro(),
         cancel(),
         moveField(2.0, 0.0, 0.5),
         cancelDrive(),
@@ -52,6 +53,7 @@ public class Autonomous extends SubsystemBase {
   public Command MOBILITY_2P_RIGHT() {
     return new ParallelCommandGroup(
         new SequentialCommandGroup(
+            resetGyro(),
             cancel(),
             moveField(2.0, 0.0, 0.5),
             cancelDrive(),
@@ -63,8 +65,8 @@ public class Autonomous extends SubsystemBase {
             rotate(0.05, 0.585),
             cancelDrive(),
             SHOOT()),
-        new SequentialCommandGroup(
-            wait(6.0), runIntake(), wait(1.5), runRetract(), wait(0.1), zeroIntake()));
+            new SequentialCommandGroup(
+                wait(6.0), runIntake(), wait(1.5), runRetract(), wait(0.1), zeroIntake())));
   }
 
   public Command MOBILITY_2P_LEFT() {
@@ -77,13 +79,26 @@ public class Autonomous extends SubsystemBase {
             SHOOT(),
             cancel(),
             rotate(0.05, 0.585),
-            moveField(-0.908, -1.782, 1.9),
-            moveField(0.908, 1.782, 1.9),
+            moveField(0.908, -1.782, 1.9),
+            moveField(-0.908, 1.782, 1.9),
             rotate(-0.05, 0.585),
             cancelDrive(),
             SHOOT()),
-        new SequentialCommandGroup(
-            wait(6.0), runIntake(), wait(1.5), runRetract(), wait(0.1), zeroIntake()));
+            new SequentialCommandGroup(
+                wait(6.0), runIntake(), wait(1.5), runRetract(), wait(0.1), zeroIntake())));
+  }
+
+  public Command MOBILITY_2P_RIGHT_CENTER() {
+    return new SequentialCommandGroup(
+        resetGyro(),
+        cancel(),
+        moveField(2.0, 0.0, 0.5),
+        cancelDrive(),
+        SHOOT(),
+        cancel(),
+        rotate(-0.05, 0.585),
+        moveField(0.908, 1.782, 5.0),
+        cancelDrive());
   }
 
   // ---------------------------------------------------------------[Commands]--------------------------------------------------------

@@ -107,7 +107,7 @@ public class Robot extends LoggedRobot {
     if (on) {
       green();
     } else {
-      purple();
+      blue();
     }
   }
   /* public Command blinkGreenBlue() {

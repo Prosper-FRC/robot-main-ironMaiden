@@ -125,6 +125,7 @@ public class RobotContainer {
     autoChooser.addOption("Mobility-Shoot", autonomous.SHOOT_MOBILITY());
     autoChooser.addOption("2P-Mobility-Right", autonomous.MOBILITY_2P_RIGHT());
     autoChooser.addOption("2P-Mobility-Left", autonomous.MOBILITY_2P_LEFT());
+    autoChooser.addOption("2P-Mobility-Right-Center", autonomous.MOBILITY_2P_RIGHT_CENTER());
     // Configure the button bindings
     configureButtonBindingsFatemeh();
   }
@@ -136,9 +137,28 @@ public class RobotContainer {
     // 'a' button outtakes note
     operator
         .leftTrigger()
-        .whileTrue(new InstantCommand(() -> intake.outtake()))
-        .onFalse(new InstantCommand(() -> intake.zero()));
+        .whileTrue(new InstantCommand(() -> shooter.setSpeakerSpeed()))
+        .onFalse(new InstantCommand(() -> shooter.zero()));
     // driver.y().onTrue(autonomous.SHOOT_MOBILITY());
+
+    operator
+        .rightBumper()
+        .whileTrue(new InstantCommand(() -> intake.outtake()))
+        .onFalse(
+            new ParallelCommandGroup(
+                new InstantCommand(() -> arm.goToShootPos()),
+                new InstantCommand(() -> intake.zero()),
+                new InstantCommand(() -> shooter.zero())));
+
+    operator
+        .rightTrigger()
+        .whileTrue(speakerButtonBinding())
+        .onFalse(
+            new ParallelCommandGroup(
+                new InstantCommand(() -> arm.goToShootPos()),
+                new InstantCommand(() -> intake.zero()),
+                new InstantCommand(() -> shooter.zero())));
+
     operator
         .povUp()
         .whileTrue(new InstantCommand(() -> shooter.setSpeedReverse()))
@@ -148,6 +168,7 @@ public class RobotContainer {
                   shooter.zero();
                   intake.zero();
                 }));
+
     operator
         .a()
         .whileTrue(
@@ -163,14 +184,7 @@ public class RobotContainer {
                 new InstantCommand(() -> arm.goToShootPos()),
                 new InstantCommand(() -> intake.zero()),
                 new InstantCommand(() -> shooter.zero())));
-    operator
-        .rightBumper()
-        .whileTrue(new InstantCommand(() -> intake.outtake()))
-        .onFalse(
-            new ParallelCommandGroup(
-                new InstantCommand(() -> arm.goToShootPos()),
-                new InstantCommand(() -> intake.zero()),
-                new InstantCommand(() -> shooter.zero())));
+
     operator
         .y()
         .whileTrue(
@@ -186,14 +200,7 @@ public class RobotContainer {
                 new InstantCommand(() -> arm.goToShootPos()),
                 new InstantCommand(() -> intake.zero()),
                 new InstantCommand(() -> shooter.zero())));
-    operator
-        .rightTrigger()
-        .whileTrue(speakerButtonBinding())
-        .onFalse(
-            new ParallelCommandGroup(
-                new InstantCommand(() -> arm.goToShootPos()),
-                new InstantCommand(() -> intake.zero()),
-                new InstantCommand(() -> shooter.zero())));
+
     drive.setDefaultCommand(
         DriveCommands.joystickDrive(
             drive, () -> driver.getLeftY(), () -> driver.getLeftX(), () -> -driver.getRightX()));
@@ -228,6 +235,11 @@ public class RobotContainer {
     // right bumper intakes note and retracts to move note away from shooter wheels
     operator.leftBumper().whileTrue(smartFeed);
     operator.leftBumper().onFalse(new InstantCommand(() -> intake.zero()));
+
+    // Right Trigger revs shooter wheels
+    operator.rightTrigger().whileTrue(new InstantCommand(() -> shooter.setSpeakerSpeed()));
+    operator.rightTrigger().onFalse(new InstantCommand(() -> shooter.zero()));
+
     // 'a' button outtakes note
     operator
         .leftTrigger()
