@@ -40,14 +40,9 @@ public class Autonomous extends SubsystemBase {
 
   public Command SHOOT_MOBILITY() {
     return new SequentialCommandGroup(
-        resetGyro(),
-        cancel(),
-        moveField(2.0, 0.0, 0.5),
-        cancelDrive(),
-        SHOOT(),
-        cancel(),
-        moveField(2.0, 0.0, 0.5),
-        cancelDrive());
+        resetGyro(), cancel(), moveField(2.0, 0.0, 0.5), cancelDrive(), SHOOT(), cancel());
+    // moveField(2.0, 0.0, 0.5),
+    // cancelDrive());
   }
 
   public Command MOBILITY_2P_RIGHT() {
